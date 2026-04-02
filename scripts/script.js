@@ -363,9 +363,9 @@ window.saveGame = async function() {
         resources: window.getGameResources(),
         energyState: window.getEnergyState ? window.getEnergyState() : null,
         fluidsState: window.getFluidsState ? window.getFluidsState() : null,
-        blocksArray: window.blocksArray || [],
-        upgrades: window.upgrades || [],
+        allBlocks: window.getAllBlocks ? window.getAllBlocks().map(b => ({ id: b.id, level: b.level, cost: b.cost })) : [],
         craftingRecipes: window.getCraftingRecipes ? window.getCraftingRecipes().map(r => ({ id: r.id, level: r.level, cost: r.cost })) : [],
+        upgrades: window.getUpgradesArray ? window.getUpgradesArray().map(u => ({ id: u.id, currentLevel: u.currentLevel, cost: u.cost })) : [],
         autominingMultiplier: window.autominingMultiplier
     };
     
@@ -432,12 +432,16 @@ window.loadGame = async function() {
                 }
             }
         }
-        // Cargar Niveles de Bloques
-        if (data.blocksArray && window.blocksArray) {
-            data.blocksArray.forEach(savedBlock => {
-                const block = window.blocksArray.find(b => b.id === savedBlock.id);
+        // Load Block Levels (production, energy, liquid)
+        const blocksToLoad = data.allBlocks || data.blocksArray; // backwards compat
+        if (blocksToLoad && window.getAllBlocks) {
+            const allBlocks = window.getAllBlocks();
+            blocksToLoad.forEach(savedBlock => {
+                const block = allBlocks.find(b => b.id === savedBlock.id);
                 if (block) {
                     block.level = savedBlock.level || 0;
+                    if (savedBlock.cost) block.cost = savedBlock.cost;
+                    if (block.level > 0) block.unlocked = true;
                 }
             });
         }
@@ -454,11 +458,14 @@ window.loadGame = async function() {
             });
         }
         // Load Upgrades
-        if (data.upgrades && window.upgrades) {
+        if (data.upgrades && window.getUpgradesArray) {
+            const allUpgrades = window.getUpgradesArray();
             data.upgrades.forEach(savedUp => {
-                const up = window.upgrades.find(u => u.id === savedUp.id);
+                const up = allUpgrades.find(u => u.id === savedUp.id);
                 if (up) {
                     up.currentLevel = savedUp.currentLevel || 0;
+                    if (savedUp.cost) up.cost = savedUp.cost;
+                    if (up.currentLevel > 0) up.unlocked = true;
                 }
             });
         }
