@@ -308,36 +308,80 @@ function createUpgradeButton(u) {
     const btn = document.createElement('button');
     btn.id = `upgrade-btn-${u.id}`;
     btn.className = 'upgrade-btn';
-    btn.innerHTML = `
-        <div class="upgrade-info">
-            <span class="upgrade-name">${u.name}</span>
-            <span class="upgrade-effect">${u.type === 'automine' ? `Auto: +${u.rate[Object.keys(u.rate)[0]]}/s` : u.description}</span>
-            <div class="upgrade-cost-container"><span class="upgrade-cost"></span></div>
-            <div id="quick-controls-${u.id}" class="card-quick-controls" style="display:none">
-                <button id="minus-${u.id}" class="card-quick-btn minus">−</button>
-                <span class="quick-lvl-label">Lvl ${u.currentLevel}</span>
-                <button id="plus-${u.id}" class="card-quick-btn plus">+</button>
-            </div>
-            ${u.unlockReq ? '<div class="unlock-req-text"></div>' : ''}
-        </div>
-        <img src="${u.sprite}" alt="${u.name}" class="upgrade-sprite">
-    `;
+
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'upgrade-info';
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'upgrade-name';
+    nameSpan.textContent = u.name;
+
+    const effectSpan = document.createElement('span');
+    effectSpan.className = 'upgrade-effect';
+
+    const buyContainer = document.createElement('div');
+    buyContainer.style.marginTop = '5px';
+
+    const buyBtn = document.createElement('button');
+    buyBtn.className = 'buy-sub-btn';
+    buyBtn.style.padding = '3px 8px';
+    buyBtn.textContent = 'Upgrade';
+    buyContainer.appendChild(buyBtn);
+
+    const qcDiv = document.createElement('div');
+    qcDiv.className = 'card-quick-controls';
+    qcDiv.style.display = 'none';
+
+    const minusBtn = document.createElement('button');
+    minusBtn.className = 'card-quick-btn minus';
+    minusBtn.textContent = '−';
+
+    const lvlSpan = document.createElement('span');
+    lvlSpan.className = 'quick-lvl-label';
+    lvlSpan.textContent = `Lvl ${u.currentLevel}`;
+
+    const plusBtn = document.createElement('button');
+    plusBtn.className = 'card-quick-btn plus';
+    plusBtn.textContent = '+';
+
+    qcDiv.appendChild(minusBtn);
+    qcDiv.appendChild(lvlSpan);
+    qcDiv.appendChild(plusBtn);
+
+    infoDiv.appendChild(nameSpan);
+    infoDiv.appendChild(effectSpan);
+    infoDiv.appendChild(buyContainer);
+    infoDiv.appendChild(qcDiv);
+
+    if (u.unlockReq) {
+        const reqDiv = document.createElement('div');
+        reqDiv.className = 'unlock-req-text';
+        infoDiv.appendChild(reqDiv);
+    }
+
+    const img = document.createElement('img');
+    img.src = u.sprite;
+    img.alt = u.name;
+    img.className = 'upgrade-sprite';
+
+    btn.appendChild(infoDiv);
+    btn.appendChild(img);
     
-    // Listeners para botones rápidos
-    btn.querySelector('.card-quick-btn.minus').addEventListener('click', (e) => {
+    // Listeners
+    minusBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (window.refundUpgrade) window.refundUpgrade(u);
         document.dispatchEvent(new CustomEvent('checkUpgrades'));
     });
-    btn.querySelector('.card-quick-btn.plus').addEventListener('click', (e) => {
+    plusBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (window.attemptBuyUpgradeById) window.attemptBuyUpgradeById(u.id);
         document.dispatchEvent(new CustomEvent('checkUpgrades'));
     });
-
     btn.addEventListener('click', () => {
         if (u.unlocked && u.currentLevel < u.maxLevel) attemptBuyUpgrade(u);
     });
+
     u.element = btn;
     upgradeButtonsContainer.appendChild(btn);
 }
@@ -346,13 +390,22 @@ window.updateUpgradesPanel = function () {
     checkUnlockReqs();
     upgrades.forEach(u => {
         if (!u.element) return;
-        if (u.currentLevel >= u.maxLevel) { u.element.style.display = 'none'; return; }
+        const infoDiv = u.element.querySelector('.upgrade-info');
+        const nameEl = infoDiv.querySelector('.upgrade-name');
+        const effectEl = infoDiv.querySelector('.upgrade-effect');
+        const buyBtn = infoDiv.querySelector('.buy-sub-btn');
+        const reqEl = infoDiv.querySelector('.unlock-req-text');
+
+        if (u.currentLevel >= u.maxLevel) {
+            u.element.style.display = 'none';
+            return;
+        }
+
         if (!u.unlocked) {
             u.element.style.display = 'flex';
             u.element.classList.add('locked');
             u.element.classList.remove('can-buy');
             u.element.disabled = true;
-            const reqEl = u.element.querySelector('.unlock-req-text');
             if (reqEl) {
                 let txt = '';
                 if (u.unlockReqs) {
@@ -373,17 +426,30 @@ window.updateUpgradesPanel = function () {
             }
             return;
         }
+
         u.element.style.display = 'flex';
         u.element.classList.remove('locked');
-        u.element.disabled = false; // RE-HABILITAR CLICS
-        const reqEl = u.element.querySelector('.unlock-req-text');
+        u.element.disabled = false;
         if (reqEl) reqEl.textContent = '';
-        u.element.querySelector('.upgrade-name').textContent = u.name + (u.maxLevel > 1 ? ` (Lvl ${u.currentLevel}/${u.maxLevel})` : '');
-        u.element.querySelector('.upgrade-cost').innerHTML = Object.entries(u.cost).map(([r, v]) => `<span class="cost-item">${v.toLocaleString()} ${r}</span>`).join(', ');
+
+        nameEl.textContent = u.name + (u.maxLevel > 1 ? ` (Lvl ${u.currentLevel}/${u.maxLevel})` : '');
+        effectEl.textContent = u.type === 'automine' ? `Auto: +${u.rate[Object.keys(u.rate)[0]]}/s` : u.description;
         
-        const can = (() => { for (const r in u.cost) if ((window.getGameResources()[r] || 0) < u.cost[r]) return false; return true; })();
-        u.element.disabled = !can;
-        u.element.classList.toggle('can-buy', can);
+        const canAfford = (() => {
+            const res = window.getGameResources();
+            for (const r in u.cost) if ((res[r] || 0) < u.cost[r]) return false;
+            return true;
+        })();
+
+        u.element.disabled = !canAfford;
+        u.element.classList.toggle('can-buy', canAfford);
+
+        if (buyBtn) {
+            buyBtn.disabled = !canAfford;
+            buyBtn.classList.toggle('can-buy', canAfford);
+            const action = u.currentLevel === 0 ? 'Explore' : 'Upgrade';
+            buyBtn.textContent = `${action} (${Object.entries(u.cost).map(([r, v]) => `${v.toLocaleString()} ${r}`).join(', ')})`;
+        }
 
         // Mostrar/Ocultar controles rápidos si Logic está desbloqueado
         const qc = u.element.querySelector('.card-quick-controls');
@@ -393,7 +459,7 @@ window.updateUpgradesPanel = function () {
             if (isLogic) {
                 qc.querySelector('.quick-lvl-label').textContent = `Lvl ${u.currentLevel}`;
                 qc.querySelector('.minus').disabled = u.currentLevel <= 0;
-                qc.querySelector('.plus').disabled = u.currentLevel >= u.maxLevel || !can;
+                qc.querySelector('.plus').disabled = u.currentLevel >= u.maxLevel || !canAfford;
             }
         }
     });
