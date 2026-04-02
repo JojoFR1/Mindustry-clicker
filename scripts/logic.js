@@ -1,111 +1,82 @@
 // scripts/logic.js
-// Quick Controls: Enabled when Logic Processor (logicBlocks) is level >= 1
+// Quick Controls: Enabled when Logic Processor (micro-processor) is level >= 1
 
 function buildQuickControls() {
     const container = document.getElementById('quick-controls-container');
     if (!container) return;
     container.innerHTML = '';
 
+    // --- 1. FACTORY BLOCKS ---
     const allBlocks = window.getAllBlocks ? window.getAllBlocks() : [];
-    // Exclude the logic-processor itself and battery/storage-only blocks
-    const targetBlocks = allBlocks.filter(b =>
-        b.id !== 'logic-processor' && b.maxLevel > 1
-    );
+    const targetBlocks = allBlocks.filter(b => b.id !== 'micro-processor' && b.maxLevel > 1);
 
-    if (targetBlocks.length === 0) {
-        container.innerHTML = '<p style="color:#aaa; font-size:0.85em;">No factory blocks available yet.</p>';
-        return;
+    if (targetBlocks.length > 0) {
+        createQuickSection(container, 'Quick Factory Controls', targetBlocks, 'block');
     }
 
+    // --- 2. SECTOR UPGRADES ---
+    const allUpgrades = window.getUpgradesArray ? window.getUpgradesArray() : [];
+    const targetUpgrades = allUpgrades.filter(u => u.maxLevel > 1);
+
+    if (targetUpgrades.length > 0) {
+        createQuickSection(container, 'Quick Upgrade Controls', targetUpgrades, 'upgrade');
+    }
+
+    if (targetBlocks.length === 0 && targetUpgrades.length === 0) {
+        container.innerHTML = '<p style="color:#aaa; font-size:0.85em;">No items available yet.</p>';
+    }
+}
+
+function createQuickSection(parent, title, items, type) {
     const header = document.createElement('h3');
-    header.textContent = 'Quick Factory Controls';
-    header.style.cssText = 'margin:0 0 12px; color:#fff; font-size:1em; border-bottom:1px solid #444; padding-bottom:8px;';
-    container.appendChild(header);
+    header.textContent = title;
+    header.style.cssText = 'margin:16px 0 12px; color:#fff; font-size:1em; border-bottom:1px solid #444; padding-bottom:8px;';
+    parent.appendChild(header);
 
     const grid = document.createElement('div');
     grid.style.cssText = 'display:flex; flex-direction:column; gap:8px;';
 
-    targetBlocks.forEach(block => {
+    items.forEach(item => {
         const row = document.createElement('div');
-        row.id = `quick-ctrl-${block.id}`;
+        row.id = `quick-ctrl-${item.id}`;
         row.style.cssText = 'display:flex; align-items:center; gap:8px; background:#2f3136; border-radius:6px; padding:6px 10px;';
 
         const icon = document.createElement('img');
-        icon.src = block.sprite;
+        icon.src = item.sprite;
         icon.style.cssText = 'width:24px; height:24px; object-fit:contain; flex-shrink:0;';
 
         const nameSpan = document.createElement('span');
-        nameSpan.id = `quick-name-${block.id}`;
+        nameSpan.id = `quick-name-${item.id}`;
         nameSpan.style.cssText = 'flex:1; font-size:0.85em; color:#dcddde; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
-        nameSpan.textContent = `${block.name} (Lvl ${block.level}/${block.maxLevel})`;
+        
+        const currentLvl = type === 'block' ? item.level : item.currentLevel;
+        nameSpan.textContent = `${item.name} (Lvl ${currentLvl}/${item.maxLevel})`;
 
         const minusBtn = document.createElement('button');
         minusBtn.className = 'logic-quick-btn';
         minusBtn.textContent = '−';
-        minusBtn.title = `Remove one ${block.name}`;
         minusBtn.style.cssText = 'width:28px; height:28px; background:#4f545c; border:none; border-radius:4px; color:#fff; font-size:1.1em; cursor:pointer; flex-shrink:0; transition:background 0.15s;';
         minusBtn.onmouseover = () => minusBtn.style.background = '#da3633';
         minusBtn.onmouseout = () => minusBtn.style.background = '#4f545c';
-        minusBtn.addEventListener('click', (e) => {
+        minusBtn.onclick = (e) => {
             e.stopPropagation();
-            if (block.level > 0) {
-                block.level--;
-                // Refund half the scaled cost
-                if (window.addResources) {
-                    const refund = {};
-                    for (const r in block.base_cost || block.cost) {
-                        refund[r] = Math.floor(block.cost[r] / 2);
-                    }
-                    window.addResources(refund);
-                }
-                // Recalculate cost for new level
-                if (block.level < block.maxLevel && block.level > 0) {
-                    for (const r in block.cost) {
-                        block.cost[r] = Math.ceil(block.cost[r] / (block.cost_multiplier || 1.5));
-                    }
-                } else if (block.level === 0) {
-                    // Reset to base cost
-                    block.cost = JSON.parse(JSON.stringify(block.base_cost || block.cost));
-                }
-                if (window.recalculateNominalStats) window.recalculateNominalStats();
-                if (window.recalculateTotalBlockConsumption) window.recalculateTotalBlockConsumption();
-                window.guiDirty = true;
-                updateQuickControlRow(block, nameSpan, minusBtn, addBtn);
-            }
-        });
+            if (type === 'block') refundBlock(item);
+            else refundUpgrade(item);
+            updateQuickRow(item, type, nameSpan, minusBtn, addBtn);
+        };
 
         const addBtn = document.createElement('button');
         addBtn.className = 'logic-quick-btn';
         addBtn.textContent = '+';
-        addBtn.title = `Add one ${block.name}`;
         addBtn.style.cssText = 'width:28px; height:28px; background:#4f545c; border:none; border-radius:4px; color:#fff; font-size:1.1em; cursor:pointer; flex-shrink:0; transition:background 0.15s;';
         addBtn.onmouseover = () => addBtn.style.background = '#43b581';
         addBtn.onmouseout = () => addBtn.style.background = '#4f545c';
-        addBtn.addEventListener('click', (e) => {
+        addBtn.onclick = (e) => {
             e.stopPropagation();
-            // Attempt buy using existing block buy logic
-            if (window.attemptBuyBlockById) {
-                window.attemptBuyBlockById(block.id);
-            } else {
-                // Inline fallback
-                const res = window.getGameResources ? window.getGameResources() : {};
-                let canAfford = true;
-                for (const r in block.cost) {
-                    if ((res[r] || 0) < block.cost[r]) { canAfford = false; break; }
-                }
-                if (canAfford && block.level < block.maxLevel) {
-                    if (window.subtractResources) window.subtractResources(block.cost);
-                    block.level++;
-                    if (block.level < block.maxLevel) {
-                        for (const r in block.cost) block.cost[r] = Math.ceil(block.cost[r] * (block.cost_multiplier || 1.5));
-                    }
-                    if (window.recalculateNominalStats) window.recalculateNominalStats();
-                    if (window.recalculateTotalBlockConsumption) window.recalculateTotalBlockConsumption();
-                    window.guiDirty = true;
-                }
-            }
-            updateQuickControlRow(block, nameSpan, minusBtn, addBtn);
-        });
+            if (type === 'block') window.attemptBuyBlockById(item.id);
+            else attemptBuyUpgradeById(item.id);
+            updateQuickRow(item, type, nameSpan, minusBtn, addBtn);
+        };
 
         row.appendChild(icon);
         row.appendChild(nameSpan);
@@ -113,60 +84,95 @@ function buildQuickControls() {
         row.appendChild(addBtn);
         grid.appendChild(row);
 
-        updateQuickControlRow(block, nameSpan, minusBtn, addBtn);
+        updateQuickRow(item, type, nameSpan, minusBtn, addBtn);
     });
 
-    container.appendChild(grid);
+    parent.appendChild(grid);
 }
 
-function updateQuickControlRow(block, nameSpan, minusBtn, addBtn) {
+function updateQuickRow(item, type, nameSpan, minusBtn, addBtn) {
     if (!nameSpan) return;
-    nameSpan.textContent = `${block.name} (Lvl ${block.level}/${block.maxLevel})`;
-    minusBtn.disabled = block.level <= 0;
-    minusBtn.style.opacity = block.level <= 0 ? '0.4' : '1';
-    addBtn.disabled = block.level >= block.maxLevel;
-    addBtn.style.opacity = block.level >= block.maxLevel ? '0.4' : '1';
+    const currentLvl = type === 'block' ? item.level : item.currentLevel;
+    nameSpan.textContent = `${item.name} (Lvl ${currentLvl}/${item.maxLevel})`;
+    minusBtn.disabled = currentLvl <= 0;
+    minusBtn.style.opacity = currentLvl <= 0 ? '0.4' : '1';
+    addBtn.disabled = currentLvl >= item.maxLevel;
+    addBtn.style.opacity = currentLvl >= item.maxLevel ? '0.4' : '1';
 }
 
-// Refresh all quick control row labels (called from game loop)
-window.refreshQuickControls = function () {
-    const allBlocks = window.getAllBlocks ? window.getAllBlocks() : [];
-    allBlocks.forEach(block => {
-        const nameSpan = document.getElementById(`quick-name-${block.id}`);
-        const row = document.getElementById(`quick-ctrl-${block.id}`);
-        if (!nameSpan || !row) return;
-        const minusBtn = row.children[2];
-        const addBtn = row.children[3];
-        updateQuickControlRow(block, nameSpan, minusBtn, addBtn);
-    });
-};
-
-// Expose for blocks.js buy button
-window.attemptBuyBlockById = function (blockId) {
-    const allBlocks = window.getAllBlocks ? window.getAllBlocks() : [];
-    const block = allBlocks.find(b => b.id === blockId);
-    if (!block || block.level >= block.maxLevel) return false;
-    const res = window.getGameResources ? window.getGameResources() : {};
-    for (const r in block.cost) {
-        if ((res[r] || 0) < block.cost[r]) return false;
+function refundBlock(block) {
+    if (block.level <= 0) return;
+    block.level--;
+    // Refund 60% of the CURRENT cost (since it's scaled)
+    if (window.addResources) {
+        const refund = {};
+        for (const r in block.cost) refund[r] = Math.floor(block.cost[r] * 0.6);
+        window.addResources(refund);
     }
-    if (!window.subtractResources(block.cost)) return false;
-    block.level++;
-    if (block.level === 1) {
-        if (block.output_resource && window.unlockResource) window.unlockResource(block.output_resource);
-        if (block.fluid_output_resource && window.unlockResource) window.unlockResource(block.fluid_output_resource);
-    }
-    if (block.level < block.maxLevel) {
-        for (const r in block.cost) block.cost[r] = Math.ceil(block.cost[r] * (block.cost_multiplier || 1.5));
+    // Recalculate cost for new level
+    if (block.level > 0) {
+        for (const r in block.cost) block.cost[r] = Math.ceil(block.cost[r] / (block.cost_multiplier || 1.5));
+    } else {
+        block.cost = JSON.parse(JSON.stringify(block.base_cost));
     }
     if (window.recalculateNominalStats) window.recalculateNominalStats();
     if (window.recalculateTotalBlockConsumption) window.recalculateTotalBlockConsumption();
     window.guiDirty = true;
-    document.dispatchEvent(new CustomEvent('checkUpgrades'));
-    return true;
+}
+
+function refundUpgrade(u) {
+    if (u.currentLevel <= 0) return;
+    u.currentLevel--;
+    // Refund 60%
+    if (window.addResources) {
+        const refund = {};
+        for (const r in u.cost) refund[r] = Math.floor(u.cost[r] * 0.6);
+        window.addResources(refund);
+    }
+    // Revert cost manually (inverse of 1.35 as defined in upgrades.js)
+    if (u.currentLevel > 0) {
+        for (const r in u.cost) u.cost[r] = Math.ceil(u.cost[r] / 1.35);
+    } else {
+        u.cost = JSON.parse(JSON.stringify(u.base_cost));
+    }
+    // Recalculate global stats if mining/auto changed
+    if (window.recalculateGlobalStats) window.recalculateGlobalStats();
+    window.guiDirty = true;
+}
+
+function attemptBuyUpgradeById(id) {
+    const u = (window.getUpgradesArray ? window.getUpgradesArray() : []).find(u => u.id === id);
+    if (!u || u.currentLevel >= u.maxLevel) return false;
+    const res = window.getGameResources ? window.getGameResources() : {};
+    for (const r in u.cost) if ((res[r] || 0) < u.cost[r]) return false;
+    
+    if (window.subtractResources(u.cost)) {
+        u.currentLevel++;
+        if (u.currentLevel < u.maxLevel) {
+            for (const r in u.cost) u.cost[r] = Math.ceil(u.cost[r] * 1.35);
+        }
+        if (u.onBuy) u.onBuy();
+        if (window.recalculateGlobalStats) window.recalculateGlobalStats();
+        window.guiDirty = true;
+        return true;
+    }
+    return false;
+}
+
+window.refreshQuickControls = function () {
+    const blocks = window.getAllBlocks ? window.getAllBlocks() : [];
+    const upgrades = window.getUpgradesArray ? window.getUpgradesArray() : [];
+    
+    blocks.forEach(b => {
+        const row = document.getElementById(`quick-ctrl-${b.id}`);
+        if (row) updateQuickRow(b, 'block', row.children[1], row.children[2], row.children[3]);
+    });
+    upgrades.forEach(u => {
+        const row = document.getElementById(`quick-ctrl-${u.id}`);
+        if (row) updateQuickRow(u, 'upgrade', row.children[1], row.children[2], row.children[3]);
+    });
 };
 
-// Check and show/hide the quick controls container
 window.updateLogicQuickControls = function () {
     const container = document.getElementById('quick-controls-container');
     if (!container) return;
@@ -182,11 +188,8 @@ window.updateLogicQuickControls = function () {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Rebuild controls when logic block is bought
     document.addEventListener('checkUpgrades', window.updateLogicQuickControls);
     document.addEventListener('resourcesUpdated', () => {
-        if (window.isLogicUnlocked && window.isLogicUnlocked()) {
-            window.refreshQuickControls();
-        }
+        if (window.isLogicUnlocked && window.isLogicUnlocked()) window.refreshQuickControls();
     });
 });
