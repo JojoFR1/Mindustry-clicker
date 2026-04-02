@@ -277,11 +277,31 @@ function createUpgradeButton(u) {
             <span class="upgrade-name">${u.name}</span>
             <span class="upgrade-effect">${u.type === 'automine' ? `Auto: +${u.rate[Object.keys(u.rate)[0]]}/s` : u.description}</span>
             <div class="upgrade-cost-container"><span class="upgrade-cost"></span></div>
+            <div id="quick-controls-${u.id}" class="card-quick-controls" style="display:none">
+                <button id="minus-${u.id}" class="card-quick-btn minus">−</button>
+                <span class="quick-lvl-label">Lvl ${u.currentLevel}</span>
+                <button id="plus-${u.id}" class="card-quick-btn plus">+</button>
+            </div>
             ${u.unlockReq ? '<div class="unlock-req-text"></div>' : ''}
         </div>
         <img src="${u.sprite}" alt="${u.name}" class="upgrade-sprite">
     `;
-    btn.addEventListener('click', () => attemptBuyUpgrade(u));
+    
+    // Listeners para botones rápidos
+    btn.querySelector('.card-quick-btn.minus').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.refundUpgrade) window.refundUpgrade(u);
+        window.updateUpgradesPanel();
+    });
+    btn.querySelector('.card-quick-btn.plus').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.attemptBuyUpgradeById) window.attemptBuyUpgradeById(u.id);
+        window.updateUpgradesPanel();
+    });
+
+    btn.addEventListener('click', () => {
+        if (u.unlocked && u.currentLevel < u.maxLevel) attemptBuyUpgrade(u);
+    });
     u.element = btn;
     upgradeButtonsContainer.appendChild(btn);
 }
@@ -324,9 +344,22 @@ window.updateUpgradesPanel = function () {
         if (reqEl) reqEl.textContent = '';
         u.element.querySelector('.upgrade-name').textContent = u.name + (u.maxLevel > 1 ? ` (Lvl ${u.currentLevel}/${u.maxLevel})` : '');
         u.element.querySelector('.upgrade-cost').innerHTML = Object.entries(u.cost).map(([r, v]) => `<span class="cost-item">${v.toLocaleString()} ${r}</span>`).join(', ');
+        
         const can = (() => { for (const r in u.cost) if ((window.getGameResources()[r] || 0) < u.cost[r]) return false; return true; })();
         u.element.disabled = !can;
         u.element.classList.toggle('can-buy', can);
+
+        // Mostrar/Ocultar controles rápidos si Logic está desbloqueado
+        const qc = u.element.querySelector('.card-quick-controls');
+        if (qc) {
+            const isLogic = window.isLogicUnlocked ? window.isLogicUnlocked() : false;
+            qc.style.display = isLogic ? 'flex' : 'none';
+            if (isLogic) {
+                qc.querySelector('.quick-lvl-label').textContent = `Lvl ${u.currentLevel}`;
+                qc.querySelector('.minus').disabled = u.currentLevel <= 0;
+                qc.querySelector('.plus').disabled = u.currentLevel >= u.maxLevel || !can;
+            }
+        }
     });
 };
 

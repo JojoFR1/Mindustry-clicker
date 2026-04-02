@@ -249,3 +249,43 @@ main {
 .buy-sub-btn.can-buy {
     border-color: #F3E979;
 }
+
+.card-quick-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    align-items: center;
+}
+
+.card-quick-btn {
+    width: 28px;
+    height: 28px;
+    background: #4f545c;
+    border: 1px solid #777;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.15s, opacity 0.15s;
+    user-select: none;
+}
+
+.card-quick-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.card-quick-btn.minus:hover:not(:disabled) { background: #da3633; }
+.card-quick-btn.plus:hover:not(:disabled) { background: #43b581; }
+
+.quick-lvl-label {
+    font-size: 0.9em;
+    color: #fff;
+    font-weight: bold;
+    min-width: 45px;
+    text-align: center;
+}

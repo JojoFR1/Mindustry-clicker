@@ -707,13 +707,30 @@ function createBlockButton(block, containerId) {
             <div id="block-buy-container-${block.id}" style="margin-top:5px">
                 <button id="block-buy-btn-${block.id}" class="buy-sub-btn" style="padding:3px 8px">${block.category === 'energy' ? 'Buy Generator' : 'Buy Block'}</button>
             </div>
+            <div id="quick-controls-${block.id}" class="card-quick-controls" style="display:none">
+                <button id="minus-${block.id}" class="card-quick-btn minus">−</button>
+                <span class="quick-lvl-label">Lvl ${block.level}</span>
+                <button id="plus-${block.id}" class="card-quick-btn plus">+</button>
+            </div>
             ${unlockHtml}
         </div>
         <img src="${block.sprite}" alt="${block.name}" class="upgrade-sprite">
     `;
+    
+    // Listeners rápidos
+    btn.querySelector('.card-quick-btn.minus').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.refundBlock) window.refundBlock(block);
+        window.updateBlocksPanel();
+    });
+    btn.querySelector('.card-quick-btn.plus').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window.attemptBuyBlockById) window.attemptBuyBlockById(block.id);
+        window.updateBlocksPanel();
+    });
+
     btn.addEventListener('click', (e) => {
-        // No comprar si estamos tocando un control rápido de lógica (si llegara a estar dentro, para prevenir errores)
-        if (e.target.closest('.logic-quick-btn')) return;
+        if (e.target.closest('.card-quick-btn')) return;
         attemptBuyBlock(block);
     });
     block.element = btn;
@@ -801,6 +818,19 @@ function updateBlockButton(block) {
         buyBtn.disabled = !canBuy;
         buyBtn.classList.toggle('can-buy', canBuy);
         buyBtn.textContent = (block.level === 0 ? 'Buy' : 'Upgrade') + ` (${Object.entries(block.cost).map(([r, v]) => `${v.toLocaleString()} ${formatRes(r)}`).join(', ')})`;
+    }
+
+    // Gestionar botones +/- de Lógica
+    const qc = block.element.querySelector('.card-quick-controls');
+    if (qc) {
+        const isLogic = window.isLogicUnlocked ? window.isLogicUnlocked() : false;
+        qc.style.display = isLogic ? 'flex' : 'none';
+        if (isLogic) {
+            qc.querySelector('.quick-lvl-label').textContent = `Lvl ${block.level}`;
+            qc.querySelector('.minus').disabled = block.level <= 0;
+            const canAff = checkCanAffordBlock(block);
+            qc.querySelector('.plus').disabled = block.level >= block.maxLevel || !canAff;
+        }
     }
 }
 
