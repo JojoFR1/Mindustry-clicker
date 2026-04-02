@@ -712,8 +712,8 @@ function createBlockButton(block, containerId) {
         <img src="${block.sprite}" alt="${block.name}" class="upgrade-sprite">
     `;
     btn.addEventListener('click', (e) => {
-        // Only trigger buy if click is on outer button, not on child buy-sub-btn
-        if (e.target.closest('.buy-sub-btn') || e.target.closest('.logic-quick-btn')) return;
+        // No comprar si estamos tocando un control rápido de lógica (si llegara a estar dentro, para prevenir errores)
+        if (e.target.closest('.logic-quick-btn')) return;
         attemptBuyBlock(block);
     });
     block.element = btn;
