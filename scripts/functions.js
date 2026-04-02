@@ -250,7 +250,14 @@ window.consumeGeneratorResources = function (deltaTime) {
         }
 
         if (gen.id === 'thorium-reactor' && gen.level > 0) {
-            const hasT = (res[gen.input_resource] || 0) >= (gen.level * gen.input_per_level * tf);
+            let hasT = true;
+            if (gen.input_resources) {
+                for (const f in gen.input_resources) {
+                    if ((res[f] || 0) < gen.level * gen.input_resources[f] * tf) { hasT = false; break; }
+                }
+            } else if (gen.input_resource) {
+                hasT = (res[gen.input_resource] || 0) >= (gen.level * gen.input_per_level * tf);
+            }
             const neededCryo = gen.level * gen.fluid_input_rate * tf;
             if (hasT && (fluidsState['cryo']?.current || 0) < neededCryo) {
                 gen.meltdownTimer = (gen.meltdownTimer || 0) + deltaTime;
