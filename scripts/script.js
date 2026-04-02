@@ -427,6 +427,11 @@ window.loadGame = async function() {
         const data = dataObj;
         // Cargar Recursos
         if (data.resources) {
+            // Migración: silicio -> silicon
+            if (data.resources.silicio !== undefined && (data.resources.silicon === undefined || data.resources.silicon === 0)) {
+                data.resources.silicon = data.resources.silicio;
+                delete data.resources.silicio;
+            }
             for (const res in data.resources) {
                 gameResources[res] = data.resources[res];
             }
