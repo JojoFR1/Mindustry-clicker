@@ -506,6 +506,7 @@ function checkDiscordAuth() {
             
             alert(`¡Conexión exitosa, Comandante ${finalName}!`);
             window.saveGame();
+            window.updateAuthButtonUI();
         })
         .catch(console.error);
 
@@ -513,6 +514,34 @@ function checkDiscordAuth() {
         window.history.replaceState(null, null, window.location.pathname);
     }
 }
+
+window.updateAuthButtonUI = function() {
+    const authBtn = document.getElementById('leaderboard-auth-btn');
+    if(!authBtn) return;
+    
+    if(localStorage.getItem('mindustryClickerCloudUser')) {
+        authBtn.innerText = "Logout";
+        authBtn.style.background = "#da3633";
+        authBtn.onmouseover = () => { authBtn.style.background = '#b62324'; };
+        authBtn.onmouseout = () => { authBtn.style.background = '#da3633'; };
+        authBtn.onclick = () => {
+            if(confirm("¿Cerrar sesión? Dejarás de transmitir tu puntaje actual al top global.")) {
+                localStorage.removeItem('mindustryClickerCloudUser');
+                localStorage.removeItem('mindustryClickerCloudAvatar');
+                window.lastUsername = "Comandante Anónimo";
+                window.lastAvatar = "";
+                window.updateAuthButtonUI();
+                alert("Sesión global desconectada.");
+            }
+        };
+    } else {
+        authBtn.innerText = "Login con Discord";
+        authBtn.style.background = "#5865F2";
+        authBtn.onmouseover = () => { authBtn.style.background = '#4752C4'; };
+        authBtn.onmouseout = () => { authBtn.style.background = '#5865F2'; };
+        authBtn.onclick = window.promptUsername;
+    }
+};
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -538,8 +567,8 @@ document.addEventListener('DOMContentLoaded', () => {
         window.loadGame();
     }, 1500); // 1.5s delay max esperando que inicialice firebase.js SDK module
     
-    // Configurar autoguardado a 20 segundos (Para no saturar Firebase free tier API)
-    setInterval(window.saveGame, 20000);
+    // Configurar autoguardado a 2 minutos
+    setInterval(window.saveGame, 120000);
     
     // Guardar también si el usuario cierra la pestaña
     window.addEventListener("beforeunload", function () {
@@ -550,6 +579,5 @@ document.addEventListener('DOMContentLoaded', () => {
     window.guiDirty = true;
     
     // Integrar Modals UI listeners
-    const authBtn = document.getElementById('leaderboard-auth-btn');
-    if(authBtn) authBtn.onclick = window.promptUsername;
+    window.updateAuthButtonUI();
 });
