@@ -30,13 +30,14 @@ function getOrSetUserId() {
     return uid;
 }
 
-window.saveToCloud = async function (username, saveDataObj, score) {
+window.saveToCloud = async function (username, saveDataObj, score, avatarUrl) {
     if (!db) return false;
     const uid = getOrSetUserId();
 
     const docRef = doc(db, "jugadores", uid);
     const payload = {
         username: username || "Comandante Anónimo",
+        avatar: avatarUrl || "",
         score: score || 0, // En este caso, será el Cobre
         data: saveDataObj,
         lastOnline: new Date().getTime() // última conexión
@@ -86,6 +87,7 @@ window.getGlobalLeaderboard = async function () {
             const data = doc.data();
             topPlayers.push({
                 username: data.username,
+                avatar: data.avatar,
                 score: data.score,
                 payload: data.data // Exportamos todo el estado de la partida para desglosarlo
             });

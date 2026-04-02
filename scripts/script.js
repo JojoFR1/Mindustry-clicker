@@ -356,6 +356,7 @@ function gameLoop(currentTime) {
 
 // Sistema de Guardado (Firebase)
 window.lastUsername = localStorage.getItem('mindustryClickerCloudUser') || "Comandante Anónimo";
+window.lastAvatar = localStorage.getItem('mindustryClickerCloudAvatar') || "";
 
 window.saveGame = async function() {
     const saveObj = {
@@ -379,7 +380,7 @@ window.saveGame = async function() {
         // El Score ahora es una combinación de tus materiales más fuertes
         const score = (res.copper || 0) + (res.silicio || 0) + (res['surge-alloy'] || 0) + slagCount;
         
-        await window.saveToCloud(window.lastUsername, saveObj, score);
+        await window.saveToCloud(window.lastUsername, saveObj, score, window.lastAvatar);
     }
 };
 
@@ -473,17 +474,44 @@ window.hardReset = function() {
     }
 };
 
-// Solicitar Nombre al usuario para el Leaderboard
+// Sistema de Login Oauth Discord
+const DISCORD_CLIENT_ID = '1489148094162669728';
+const DISCORD_REDIRECT_URI = 'https://arktcode.github.io/Mindustry-clicker/';
+
 window.promptUsername = function() {
-    let name = prompt("⚡ INGRESA TU NOMBRE DE COMANDANTE PARA EL LEADERBOARD GLOBAL 🏆 (1 a 15 caracteres):", window.lastUsername);
-    if(name && name.trim().length > 0) {
-        window.lastUsername = name.trim().substring(0, 15);
-        localStorage.setItem('mindustryClickerCloudUser', window.lastUsername);
-        alert(`¡Identidad establecida como: ${window.lastUsername}! Tus puntajes en cobre empezarán a subir al Leaderboard Mundial automaticamente cada 20 segundos.`);
-        window.saveGame();
-        if(window.openLeaderboardUI) window.openLeaderboardUI();
-    }
+    const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=token&scope=identify`;
+    window.location.href = oauthUrl;
 };
+
+function checkDiscordAuth() {
+    const fragment = new URLSearchParams(window.location.hash.slice(1));
+    const [accessToken, tokenType] = [fragment.get('access_token'), fragment.get('token_type')];
+    if (accessToken) {
+        fetch('https://discord.com/api/users/@me', {
+            headers: { authorization: `${tokenType} ${accessToken}` }
+        })
+        .then(result => result.json())
+        .then(response => {
+            const { username, global_name, avatar, id } = response;
+            const finalName = global_name || username;
+            let avatarUrl = "";
+            if(avatar) avatarUrl = `https://cdn.discordapp.com/avatars/${id}/${avatar}.png`;
+            else avatarUrl = `https://cdn.discordapp.com/embed/avatars/${parseInt(id) % 5}.png`;
+            
+            window.lastUsername = finalName;
+            window.lastAvatar = avatarUrl;
+            localStorage.setItem('mindustryClickerCloudUser', finalName);
+            localStorage.setItem('mindustryClickerCloudAvatar', avatarUrl);
+            
+            alert(`¡Conexión exitosa, Comandante ${finalName}!`);
+            window.saveGame();
+        })
+        .catch(console.error);
+
+        // Limpiar URL hash de manera limpia
+        window.history.replaceState(null, null, window.location.pathname);
+    }
+}
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -500,6 +528,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+    
+    // Revisar si volvimos de Discord Oauth
+    checkDiscordAuth();
     
     // Cargar partida o iniciar de cero (Ahora es Asíncrono por la Base de datos en la red)
     setTimeout(() => {

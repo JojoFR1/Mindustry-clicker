@@ -167,17 +167,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
+                let avatarHTML = '';
+                if (p.avatar && p.avatar.length > 5) {
+                    avatarHTML = `<img src="${p.avatar}" style="width:28px; height:28px; border-radius:50%; border: 1px solid #202225;">`;
+                } else {
+                    avatarHTML = `<div style="width:28px; height:28px; border-radius:50%; background:#5865F2; display:flex; align-items:center; justify-content:center; border: 1px solid #202225;"><img src="assets/sprites/router.png" style="width:18px; filter: grayscale(100%);"></div>`;
+                }
+
                 row.style.flexDirection = "column";
                 row.style.alignItems = "flex-start";
                 row.innerHTML = `
                     <div style="display:flex; align-items:center; gap: 12px; margin-bottom: 4px; width: 100%;">
                         <div style="width: 24px; text-align: center; font-size: 18px; font-weight: bold; color: ${color};">${rankStr}</div>
+                        ${avatarHTML}
                         <div style="color: #fff; font-weight: 600; font-size: 15px; flex-grow: 1;">${p.username}</div>
                         <div style="color: #f2a65a; font-weight: bold; font-size: 12px; background: rgba(242,166,90,0.15); padding: 2px 6px; border-radius: 4px;">
                             ${Math.floor(p.score).toLocaleString()} RP
                         </div>
                     </div>
-                    <div style="display:flex; gap: 12px; padding-left: 36px; padding-right: 10px; width: 100%; box-sizing: border-box; flex-wrap: wrap;">
+                    <div style="display:flex; gap: 12px; padding-left: 77px; padding-right: 10px; width: 100%; box-sizing: border-box; flex-wrap: wrap;">
                         <span style="display:flex; align-items:center; gap:4px; font-size:12px; color:#aaa;"><img src="assets/sprites/item-copper.png" width="14"> ${Math.floor(cu).toLocaleString()}</span>
                         <span style="display:flex; align-items:center; gap:4px; font-size:12px; color:#aaa;"><img src="assets/sprites/item-silicon.png" width="14"> ${Math.floor(si).toLocaleString()}</span>
                         <span style="display:flex; align-items:center; gap:4px; font-size:12px; color:#aaa;"><img src="assets/sprites/liquid-slag.png" width="14"> ${Math.floor(slg).toLocaleString()}</span>
