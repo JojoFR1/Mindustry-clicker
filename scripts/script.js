@@ -517,29 +517,39 @@ function checkDiscordAuth() {
 
 window.updateAuthButtonUI = function() {
     const authBtn = document.getElementById('leaderboard-auth-btn');
-    if(!authBtn) return;
+    const avatarBtn = document.getElementById('config-btn-img');
     
     if(localStorage.getItem('mindustryClickerCloudUser')) {
-        authBtn.innerText = "Logout";
-        authBtn.style.background = "#da3633";
-        authBtn.onmouseover = () => { authBtn.style.background = '#b62324'; };
-        authBtn.onmouseout = () => { authBtn.style.background = '#da3633'; };
-        authBtn.onclick = () => {
-            if(confirm("¿Cerrar sesión? Dejarás de transmitir tu puntaje actual al top global.")) {
-                localStorage.removeItem('mindustryClickerCloudUser');
-                localStorage.removeItem('mindustryClickerCloudAvatar');
-                window.lastUsername = "Comandante Anónimo";
-                window.lastAvatar = "";
-                window.updateAuthButtonUI();
-                alert("Sesión global desconectada.");
-            }
-        };
+        if(authBtn) {
+            authBtn.innerText = "Logout";
+            authBtn.style.background = "#da3633";
+            authBtn.onmouseover = () => { authBtn.style.background = '#b62324'; };
+            authBtn.onmouseout = () => { authBtn.style.background = '#da3633'; };
+            authBtn.onclick = () => {
+                if(confirm("¿Cerrar sesión? Dejarás de transmitir tu puntaje actual al top global.")) {
+                    localStorage.removeItem('mindustryClickerCloudUser');
+                    localStorage.removeItem('mindustryClickerCloudAvatar');
+                    window.lastUsername = "Comandante Anónimo";
+                    window.lastAvatar = "";
+                    window.updateAuthButtonUI();
+                    alert("Sesión global desconectada.");
+                }
+            };
+        }
+        if(avatarBtn) {
+            avatarBtn.src = localStorage.getItem('mindustryClickerCloudAvatar') || "assets/sprites/router.png";
+        }
     } else {
-        authBtn.innerText = "Login con Discord";
-        authBtn.style.background = "#5865F2";
-        authBtn.onmouseover = () => { authBtn.style.background = '#4752C4'; };
-        authBtn.onmouseout = () => { authBtn.style.background = '#5865F2'; };
-        authBtn.onclick = window.promptUsername;
+        if(authBtn) {
+            authBtn.innerText = "Login con Discord";
+            authBtn.style.background = "#5865F2";
+            authBtn.onmouseover = () => { authBtn.style.background = '#4752C4'; };
+            authBtn.onmouseout = () => { authBtn.style.background = '#5865F2'; };
+            authBtn.onclick = window.promptUsername;
+        }
+        if(avatarBtn) {
+            avatarBtn.src = "assets/sprites/router.png";
+        }
     }
 };
 
