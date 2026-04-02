@@ -36,7 +36,7 @@ window.saveToCloud = async function (username, saveDataObj, score, avatarUrl) {
 
     const docRef = doc(db, "jugadores", uid);
     const payload = {
-        username: username || "Comandante Anónimo",
+        username: username || "Crux",
         avatar: avatarUrl || "",
         score: score || 0, // En este caso, será el Cobre
         data: saveDataObj,
@@ -103,7 +103,7 @@ window.getUserRankStats = async function (userScore) {
     if (!db) return null;
     try {
         const ref = collection(db, "jugadores");
-        
+
         // Conteo total de jugadores
         const totalSnap = await getCountFromServer(ref);
         const total = totalSnap.data().count;
@@ -123,7 +123,7 @@ window.getUserRankStats = async function (userScore) {
             percentile: topPercent,
             score: userScore
         };
-    } catch(e) {
+    } catch (e) {
         console.error("Error pidiendo estadisticas porcentuales: ", e);
         return null;
     }

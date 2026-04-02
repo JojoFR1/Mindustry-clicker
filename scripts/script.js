@@ -371,8 +371,9 @@ window.saveGame = async function() {
     // Guardado de respaldo local híbrido (Por si falla internet)
     localStorage.setItem('mindustryClickerSave', JSON.stringify(saveObj));
     
-    // Subida a la Base de Datos Híbrida
-    if(window.saveToCloud) {
+    // Subida a la Base de Datos Híbrida (Solo si está verificado con Discord)
+    const cloudUser = localStorage.getItem('mindustryClickerCloudUser');
+    if(window.saveToCloud && cloudUser) {
         const res = window.getGameResources();
         const fluids = window.getFluidsState ? window.getFluidsState() : {};
         const slagCount = (fluids['slag'] && fluids['slag'].current) ? fluids['slag'].current : 0;
@@ -380,7 +381,7 @@ window.saveGame = async function() {
         // El Score ahora es una combinación de tus materiales más fuertes
         const score = (res.copper || 0) + (res.silicio || 0) + (res['surge-alloy'] || 0) + slagCount;
         
-        await window.saveToCloud(window.lastUsername, saveObj, score, window.lastAvatar);
+        await window.saveToCloud(cloudUser, saveObj, score, window.lastAvatar);
     }
 };
 

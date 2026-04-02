@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnTex.style.maxHeight = '38px';
     toggleBtn.appendChild(btnTex);
     document.body.appendChild(toggleBtn);
-    
+
     toggleBtn.onclick = () => {
         popupsEnabled = !popupsEnabled;
         toggleBtn.style.filter = popupsEnabled ? "none" : "grayscale(100%) opacity(50%)";
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.april-popup').forEach(p => p.remove());
         }
     };
-    
+
     // Router Leaderboard (Al lado del botón de Anuken)
     const routerLeaderboard = document.createElement('button');
     routerLeaderboard.id = 'april-toggle-btn';
@@ -125,21 +125,21 @@ document.addEventListener('DOMContentLoaded', () => {
     routerTex.style.maxHeight = '38px';
     routerLeaderboard.appendChild(routerTex);
     document.body.appendChild(routerLeaderboard);
-    
+
     routerLeaderboard.onmouseover = () => { routerLeaderboard.style.transform = 'scale(1.1)'; routerLeaderboard.style.background = '#555'; };
     routerLeaderboard.onmouseout = () => { routerLeaderboard.style.transform = 'scale(1)'; routerLeaderboard.style.background = '#333'; };
     toggleBtn.onmouseover = () => { toggleBtn.style.transform = 'scale(1.1)'; toggleBtn.style.background = '#555'; };
     toggleBtn.onmouseout = () => { toggleBtn.style.transform = 'scale(1)'; toggleBtn.style.background = '#333'; };
 
     routerLeaderboard.onclick = async () => {
-        document.getElementById('leaderboard-modal').style.display='flex';
-        if(window.getGlobalLeaderboard) {
+        document.getElementById('leaderboard-modal').style.display = 'flex';
+        if (window.getGlobalLeaderboard) {
             const listDiv = document.getElementById('leaderboard-list');
             listDiv.innerHTML = '<div style="text-align: center; color: #888; margin-top: 20px; font-style: italic;">Descargando ranking mundial...</div>';
             const data = await window.getGlobalLeaderboard();
             listDiv.innerHTML = '';
-            if(data.length === 0) listDiv.innerHTML = '<div style="text-align: center; color: #888; margin-top: 20px;">Nadie ha subido puntajes aún.</div>';
-            
+            if (data.length === 0) listDiv.innerHTML = '<div style="text-align: center; color: #888; margin-top: 20px;">Nadie ha subido puntajes aún.</div>';
+
             data.forEach((p, i) => {
                 const row = document.createElement('div');
                 row.style.padding = "8px 12px";
@@ -147,22 +147,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.style.borderRadius = "6px";
                 row.style.background = i % 2 === 0 ? "#292b2f" : "transparent";
                 row.style.display = "flex";
-                const rank = i+1;
+                const rank = i + 1;
                 let color = "#8e9297";
                 let rankStr = `#${rank}`;
-                
-                if(rank === 1) { color = "transparent"; rankStr = `<img src="assets/sprites/liquid-neoplasm.png" style="width:24px; height:24px; display:block;" title="Top 1 Mundial">`; }
-                else if(rank === 2) { color = "transparent"; rankStr = `<img src="assets/sprites/liquid-slag.png" style="width:24px; height:24px; display:block;" title="Top 2 Mundial">`; }
-                else if(rank === 3) { color = "transparent"; rankStr = `<img src="assets/sprites/liquid-arkycite.png" style="width:24px; height:24px; display:block;" title="Top 3 Mundial">`; }
+
+                if (rank === 1) { color = "transparent"; rankStr = `<img src="assets/sprites/liquid-neoplasm.png" style="width:24px; height:24px; display:block;" title="Top 1 Mundial">`; }
+                else if (rank === 2) { color = "transparent"; rankStr = `<img src="assets/sprites/liquid-slag.png" style="width:24px; height:24px; display:block;" title="Top 2 Mundial">`; }
+                else if (rank === 3) { color = "transparent"; rankStr = `<img src="assets/sprites/liquid-arkycite.png" style="width:24px; height:24px; display:block;" title="Top 3 Mundial">`; }
 
                 let cu = 0, si = 0, srge = 0, slg = 0;
-                if(p.payload) {
-                    if(p.payload.resources) {
+                if (p.payload) {
+                    if (p.payload.resources) {
                         cu = p.payload.resources.copper || 0;
                         si = p.payload.resources.silicio || 0;
                         srge = p.payload.resources['surge-alloy'] || 0;
                     }
-                    if(p.payload.fluidsState && p.payload.fluidsState.slag) {
+                    if (p.payload.fluidsState && p.payload.fluidsState.slag) {
                         slg = p.payload.fluidsState.slag.current || 0;
                     }
                 }
@@ -194,23 +194,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 listDiv.appendChild(row);
             });
-            
+
             // Cargar barra de percentil personal
             const statsDiv = document.getElementById('leaderboard-my-stats');
             if (statsDiv && window.getUserRankStats) {
                 statsDiv.style.display = 'block';
                 statsDiv.innerHTML = '<div style="text-align:center; color:#888; font-style:italic;">Calculando tu Percentil de Nivel...</div>';
-                
+
                 const res = window.getGameResources();
                 const fluids = window.getFluidsState ? window.getFluidsState() : {};
                 const slagCount = (fluids['slag'] && fluids['slag'].current) ? fluids['slag'].current : 0;
                 const myScore = (res.copper || 0) + (res.silicio || 0) + (res['surge-alloy'] || 0) + slagCount;
-                
+
                 const stats = await window.getUserRankStats(myScore);
                 if (stats) {
                     const avatarUrl = window.lastAvatar || "assets/sprites/router.png";
                     const usrName = window.lastUsername || "Comandante Anónimo";
-                    
+
                     statsDiv.innerHTML = `
                         <div style="font-size:11px; color:#888; margin-bottom: 8px; text-transform:uppercase; font-weight:bold; letter-spacing:1px;">Tu Rango Militar Global</div>
                         <div style="display:flex; align-items:center; gap: 12px; margin-bottom: 2px;">
