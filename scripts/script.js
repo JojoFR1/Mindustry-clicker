@@ -464,7 +464,13 @@ window.loadGame = async function() {
                 const block = allBlocks.find(b => b.id === savedBlock.id);
                 if (block) {
                     block.level = savedBlock.level || 0;
-                    if (savedBlock.cost) block.cost = savedBlock.cost;
+                    if (savedBlock.cost) {
+                        if (savedBlock.cost.silicio !== undefined) {
+                            savedBlock.cost.silicon = savedBlock.cost.silicio;
+                            delete savedBlock.cost.silicio;
+                        }
+                        block.cost = savedBlock.cost;
+                    }
                     if (block.level > 0) block.unlocked = true;
                 }
             });
@@ -476,7 +482,13 @@ window.loadGame = async function() {
                 const recipe = recipes.find(r => r.id === saved.id);
                 if (recipe) {
                     recipe.level = saved.level || 0;
-                    if (saved.cost) recipe.cost = saved.cost;
+                    if (saved.cost) {
+                        if (saved.cost.silicio !== undefined) {
+                            saved.cost.silicon = saved.cost.silicio;
+                            delete saved.cost.silicio;
+                        }
+                        recipe.cost = saved.cost;
+                    }
                     if (recipe.level > 0) recipe.unlocked = true;
                 }
             });
@@ -488,7 +500,13 @@ window.loadGame = async function() {
                 const up = allUpgrades.find(u => u.id === savedUp.id);
                 if (up) {
                     up.currentLevel = savedUp.currentLevel || 0;
-                    if (savedUp.cost) up.cost = savedUp.cost;
+                    if (savedUp.cost) {
+                        if (savedUp.cost.silicio !== undefined) {
+                            savedUp.cost.silicon = savedUp.cost.silicio;
+                            delete savedUp.cost.silicio;
+                        }
+                        up.cost = savedUp.cost;
+                    }
                     if (up.currentLevel > 0) up.unlocked = true;
                 }
             });
