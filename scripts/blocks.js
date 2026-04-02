@@ -469,6 +469,8 @@ window.getEnergyBlocks = () => energyBlocks;
 window.getLiquidBlocks = () => liquidBlocks;
 window.getAllBlocks = () => [...productionBlocks, ...energyBlocks, ...liquidBlocks];
 window.getFactoryConsumption = () => totalBlockConsumption;
+window.recalculateNominalStats = recalculateNominalStats;
+window.recalculateTotalBlockConsumption = recalculateTotalBlockConsumption;
 
 // Desbloqueo
 function isUnlockRequirementMet(block) {

@@ -16,7 +16,7 @@ const resourcesToPotentiallyUnlock = [
 ];
 
 let gameData = {
-    power: { copper: 1, lead: 0, coal: 0, sand: 0, titanium: 0, thorium: 0 },
+    power: { copper: 5, lead: 0, coal: 0, sand: 0, titanium: 0, thorium: 0 },
     automining: { copper: 0, lead: 0, coal: 0, sand: 0, titanium: 0, thorium: 0 },
     fractions: { copper: 0, lead: 0, coal: 0, sand: 0, titanium: 0, thorium: 0 },
     lastTime: performance.now(),
@@ -165,12 +165,14 @@ window.handleResourceUnlockDOM = function (resourceId) {
 
 // Recálculo Global
 window.recalculateGlobalStats = function () {
-    for (const resId in gameData.power) {
+    // 1. Reset Click Power to Base from items.js
+    const allResIds = ['copper', 'lead', 'coal', 'sand', 'titanium', 'thorium', 'graphite', 'silicio', 'metaglass', 'plastanium', 'phase-fabric', 'surge-alloy', 'spore-pod', 'pyratite', 'blast-compound'];
+    
+    allResIds.forEach(resId => {
         const data = window.getResourceData ? window.getResourceData(resId) : null;
-        gameData.power[resId] = data ? data.clickPower : 0;
-    }
-    if (!gameData.power.copper) gameData.power.copper = 5;
-    for (const resId in gameData.automining) gameData.automining[resId] = 0;
+        gameData.power[resId] = data ? data.clickPower : 1;
+        gameData.automining[resId] = 0; // Reset automining for all
+    });
 
     if (window.getUpgradesArray) {
         window.getUpgradesArray().forEach(upgrade => {
@@ -477,9 +479,9 @@ window.loadGame = async function() {
         
         console.log("Game loaded successfully!");
         
-        // Recalculate
-        if (window.recalculateEnergyCapacity) window.recalculateEnergyCapacity();
-        if (window.recalculateAutominingRates) window.recalculateAutominingRates();
+        // Recalculate everything after load
+        if (window.recalculateNominalStats) window.recalculateNominalStats();
+        if (window.recalculateTotalBlockConsumption) window.recalculateTotalBlockConsumption();
         if (window.recalculateFluidCapacities) window.recalculateFluidCapacities();
         if (window.checkResourceUnlocks) window.checkResourceUnlocks();
         if (window.updateCraftingPanel) window.updateCraftingPanel();
