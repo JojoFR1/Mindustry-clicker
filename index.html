@@ -180,13 +180,14 @@
 
     <div id="footer-buttons"
         style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px;">
-        
+
         <!-- Botón de Configuración Dinámico (Avatar) -->
-        <button id="config-btn" onclick="document.getElementById('config-modal').style.display='flex'" title="Settings & User"
+        <button id="config-btn" onclick="document.getElementById('config-modal').style.display='flex'"
+            title="Settings & User"
             style="width: 50px; height: 50px; border-radius: 50%; background: #2f3136; border: 2px solid #5865F2; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.5);"
-            onmouseover="this.style.transform='scale(1.1)'"
-            onmouseout="this.style.transform='scale(1)'">
-            <img id="config-btn-img" src="assets/sprites/router.png" style="width: 100%; height: 100%; object-fit: cover;">
+            onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+            <img id="config-btn-img" src="assets/sprites/router.png"
+                style="width: 100%; height: 100%; object-fit: cover;">
         </button>
 
         <button id="credits-btn" title="Mindustry Credits & Info"
@@ -304,35 +305,41 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Modal de Configuración (Audio & Cuentas) -->
     <div id="config-modal"
         style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2100; align-items: center; justify-content: center; font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-        <div style="background: #36393f; border-radius: 8px; width: 400px; color: #dcddde; box-shadow: 0 8px 24px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid #202225;">
-            <div style="padding: 16px; background: #2f3136; border-bottom: 1px solid #202225; display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="margin: 0; color: #fff; font-size: 20px; font-weight: bold;">App Settings</h2>
-                <button onclick="document.getElementById('config-modal').style.display='none'" style="background:transparent; border:none; color:#dcddde; cursor:pointer; font-size:18px;">✖</button>
+        <div style="background: #36393f; border-radius: 4px; width: 440px; color: #dcddde; box-shadow: 0 8px 24px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid #202225;">
+            
+            <div style="padding: 16px; background: #2f3136; border-bottom: 1px solid #202225; display: flex; justify-content: center; align-items: center;">
+                <h2 style="margin: 0; color: #fff; font-size: 16px; font-weight: 700; text-transform: uppercase;">User Settings</h2>
             </div>
             
-            <div style="padding: 20px;">
-                <div style="margin-bottom: 20px;">
-                    <label style="display:block; font-size: 12px; font-weight:bold; color:#8e9297; text-transform:uppercase; margin-bottom:8px;">Music Volume</label>
-                    <input type="range" id="vol-music" min="0" max="1" step="0.01" style="width: 100%;">
+            <div style="padding: 24px;">
+                <div style="margin-bottom: 24px;">
+                    <label style="display:block; font-size: 12px; font-weight:700; color:#b9bbbe; text-transform:uppercase; margin-bottom:8px;">Music Volume</label>
+                    <input type="range" id="vol-music" min="0" max="1" step="0.01" style="width: 100%; accent-color: #5865F2; cursor: pointer;">
                 </div>
-                <div style="margin-bottom: 20px;">
-                    <label style="display:block; font-size: 12px; font-weight:bold; color:#8e9297; text-transform:uppercase; margin-bottom:8px;">SFX Volume (Explosion)</label>
-                    <input type="range" id="vol-sfx" min="0" max="1" step="0.01" style="width: 100%;">
+                <div style="margin-bottom: 8px;">
+                    <label style="display:block; font-size: 12px; font-weight:700; color:#b9bbbe; text-transform:uppercase; margin-bottom:8px;">SFX Volume</label>
+                    <input type="range" id="vol-sfx" min="0" max="1" step="0.01" style="width: 100%; accent-color: #5865F2; cursor: pointer;">
                 </div>
-                <hr style="border:none; border-top:1px solid #202225; margin: 24px 0;">
-                <div style="display: flex; gap: 10px;">
+            </div>
+
+            <div style="padding: 16px; background: #2f3136; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #202225;">
+                <div style="display: flex; gap: 8px;">
                     <button onclick="window.saveGame(); this.innerText='Saved!'; setTimeout(()=>this.innerText='Save Game', 2000);"
-                        style="flex: 1; padding: 10px; background: #5865F2; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background 0.2s;"
-                        onmouseover="this.style.background='#4752C4'" onmouseout="this.style.background='#5865F2'">Save Game</button>
+                        style="padding: 10px 16px; background: #5865F2; color: #fff; border: none; border-radius: 3px; cursor: pointer; font-weight: 500; font-size: 14px; transition: background 0.2s;"
+                        onmouseover="this.style.background='#4752c4'" onmouseout="this.style.background='#5865F2'">Save Game</button>
                     <button onclick="window.hardReset()"
-                        style="flex: 1; padding: 10px; background: #da3633; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background 0.2s;"
-                        onmouseover="this.style.background='#b62324'" onmouseout="this.style.background='#da3633'"
+                        style="padding: 10px 16px; background: transparent; color: #ed4245; border: none; border-radius: 3px; cursor: pointer; font-weight: 500; font-size: 14px; transition: text-decoration 0.2s;"
+                        onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"
                         title="Wipe all local progress">Hard Reset</button>
                 </div>
+                <button onclick="document.getElementById('config-modal').style.display='none'"
+                    style="padding: 10px 24px; background: transparent; color: #fff; border: none; border-radius: 3px; cursor: pointer; font-weight: 500; font-size: 14px; transition: text-decoration 0.2s;"
+                    onmouseover="this.style.textDecoration='underline'"
+                    onmouseout="this.style.textDecoration='none'">Close</button>
             </div>
         </div>
     </div>
