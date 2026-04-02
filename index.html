@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindustry Clicker</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/items.css">
+    <link rel="stylesheet" href="styles/energy.css">
+    <link rel="stylesheet" href="styles/background.css">
+</head>
+
+<body>
+
+    <!-- Recursos -->
+    <div id="items-panel-wrapper"
+        style="position: fixed; top: 10px; left: 10px; display: flex; gap: 10px; z-index: 100;">
+        <div id="items-column-minerals" class="items-column">
+            <div class="mineral-item" id="item-copper"><img src="assets/sprites/item-copper.png"
+                    class="mineral-icon"><span id="item-copper-label">0</span></div>
+            <div class="mineral-item" id="item-lead" style="display:none;"><img src="assets/sprites/item-lead.png"
+                    class="mineral-icon"><span id="item-lead-label">0</span></div>
+            <div class="mineral-item" id="item-coal" style="display:none;"><img src="assets/sprites/item-coal.png"
+                    class="mineral-icon"><span id="item-coal-label">0</span></div>
+            <div class="mineral-item" id="item-sand" style="display:none;"><img src="assets/sprites/item-sand.png"
+                    class="mineral-icon"><span id="item-sand-label">0</span></div>
+            <div class="mineral-item" id="item-titanium" style="display:none;"><img
+                    src="assets/sprites/item-titanium.png" class="mineral-icon"><span id="item-titanium-label">0</span>
+            </div>
+            <div class="mineral-item" id="item-thorium" style="display:none;"><img src="assets/sprites/item-thorium.png"
+                    class="mineral-icon"><span id="item-thorium-label">0</span></div>
+        </div>
+        <div id="items-column-synthetics" class="items-column">
+            <div class="mineral-item" id="item-graphite" style="display:none;"><img
+                    src="assets/sprites/item-graphite.png" class="mineral-icon"><span id="item-graphite-label">0</span>
+            </div>
+            <div class="mineral-item" id="item-silicio" style="display:none;"><img src="assets/sprites/item-silicon.png"
+                    class="mineral-icon"><span id="item-silicio-label">0</span></div>
+            <div class="mineral-item" id="item-metaglass" style="display:none;"><img
+                    src="assets/sprites/item-metaglass.png" class="mineral-icon"><span
+                    id="item-metaglass-label">0</span></div>
+            <div class="mineral-item" id="item-plastanium" style="display:none;"><img
+                    src="assets/sprites/item-plastanium.png" class="mineral-icon"><span
+                    id="item-plastanium-label">0</span></div>
+            <div class="mineral-item" id="item-phase-fabric" style="display:none;"><img
+                    src="assets/sprites/item-phase-fabric.png" class="mineral-icon"><span
+                    id="item-phase-fabric-label">0</span></div>
+            <div class="mineral-item" id="item-surge-alloy" style="display:none;"><img
+                    src="assets/sprites/item-surge-alloy.png" class="mineral-icon"><span
+                    id="item-surge-alloy-label">0</span></div>
+            <div class="mineral-item" id="item-spore-pod" style="display:none;"><img
+                    src="assets/sprites/item-spore-pod.png" class="mineral-icon"><span
+                    id="item-spore-pod-label">0</span></div>
+            <div class="mineral-item" id="item-pyratite" style="display:none;"><img
+                    src="assets/sprites/item-pyratite.png" class="mineral-icon"><span id="item-pyratite-label">0</span>
+            </div>
+            <div class="mineral-item" id="item-blast-compound" style="display:none;"><img
+                    src="assets/sprites/item-blast-compound.png" class="mineral-icon"><span
+                    id="item-blast-compound-label">0</span></div>
+        </div>
+    </div>
+
+    <!-- Energía y Líquidos -->
+    <div id="status-panel-wrapper"
+        style="position: fixed; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 5px; z-index: 100;">
+        <div id="energy-panel">
+            <span id="energy-label">Energy: 0/0 (0/s)</span>
+            <div id="energy-bar-container">
+                <div id="energy-bar-fill"></div>
+            </div>
+        </div>
+        <div class="fluid-panel" id="water-panel">
+            <div class="fluid-bar-container">
+                <div id="water-bar-fill" class="fluid-bar-fill" style="background: #5e92cd;"></div>
+            </div>
+            <span id="water-label" class="fluid-label">Water: 0/1000 (+0/s)</span>
+            <img src="assets/sprites/liquid-water.png" class="fluid-icon">
+        </div>
+        <div class="fluid-panel" id="oil-panel" style="display:none;">
+            <div class="fluid-bar-container">
+                <div id="oil-bar-fill" class="fluid-bar-fill" style="background: #313131;"></div>
+            </div>
+            <span id="oil-label" class="fluid-label">Oil: 0/1000 (+0/s)</span>
+            <img src="assets/sprites/liquid-oil.png" class="fluid-icon">
+        </div>
+        <div class="fluid-panel" id="cryo-panel" style="display:none;">
+            <div class="fluid-bar-container">
+                <div id="cryo-bar-fill" class="fluid-bar-fill" style="background: #6ecdec;"></div>
+            </div>
+            <span id="cryo-label" class="fluid-label">Cryofluid: 0/1000 (+0/s)</span>
+            <img src="assets/sprites/liquid-cryofluid.png" class="fluid-icon">
+        </div>
+        <div class="fluid-panel" id="slag-panel" style="display:none;">
+            <div class="fluid-bar-container">
+                <div id="slag-bar-fill" class="fluid-bar-fill" style="background: #ff8c00;"></div>
+            </div>
+            <span id="slag-label" class="fluid-label">Slag: 0/1000 (+0/s)</span>
+            <img src="assets/sprites/liquid-slag.png" class="fluid-icon">
+        </div>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <div id="game-container">
+        <header>
+            <h1>Mindustry Clicker</h1>
+            <div>
+                <h4>By: Arksource</h4>
+            </div>
+        </header>
+
+        <main>
+            <section id="clicker-panel">
+                <div id="resource-panels">
+                    <div id="copper-panel" class="resource-button-container">
+                        <button class="resource-mine-btn" data-resource="copper">
+                            <img src="assets/sprites/item-copper.png" class="resource-img">
+                            <span class="resource-text" id="copper-text">Extraction (+1) /s: 0</span>
+                        </button>
+                    </div>
+                    <div id="lead-panel" class="resource-button-container locked">
+                        <button class="resource-mine-btn" data-resource="lead" disabled>
+                            <img src="assets/sprites/item-lead.png" class="resource-img">
+                            <span class="resource-text" id="lead-text">Extraction (+0) /s: 0</span>
+                        </button>
+                        <div class="unlock-overlay">LOCKED</div>
+                    </div>
+                    <div id="coal-panel" class="resource-button-container locked">
+                        <button class="resource-mine-btn" data-resource="coal" disabled>
+                            <img src="assets/sprites/item-coal.png" class="resource-img">
+                            <span class="resource-text" id="coal-text">Extraction (+0) /s: 0</span>
+                        </button>
+                        <div class="unlock-overlay">LOCKED</div>
+                    </div>
+                    <div id="sand-panel" class="resource-button-container locked">
+                        <button class="resource-mine-btn" data-resource="sand" disabled>
+                            <img src="assets/sprites/item-sand.png" class="resource-img">
+                            <span class="resource-text" id="sand-text">Extraction (+0) /s: 0</span>
+                        </button>
+                        <div class="unlock-overlay">LOCKED</div>
+                    </div>
+                    <div id="titanium-panel" class="resource-button-container locked">
+                        <button class="resource-mine-btn" data-resource="titanium" disabled>
+                            <img src="assets/sprites/item-titanium.png" class="resource-img">
+                            <span class="resource-text" id="titanium-text">Extraction (+0) /s: 0</span>
+                        </button>
+                        <div class="unlock-overlay">LOCKED</div>
+                    </div>
+                    <div id="thorium-panel" class="resource-button-container locked">
+                        <button class="resource-mine-btn" data-resource="thorium" disabled>
+                            <img src="assets/sprites/item-thorium.png" class="resource-img">
+                            <span class="resource-text" id="thorium-text">Extraction (+0) /s: 0</span>
+                        </button>
+                        <div class="unlock-overlay">LOCKED</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="upgrades-panel">
+                <div id="nav-buttons-container"></div>
+                <div id="upgrades-section" class="upgrades-subsection">
+                    <h2>Sector Upgrades</h2>
+                    <div id="upgrade-buttons-container"></div>
+                </div>
+                <div id="production-section" class="upgrades-subsection hidden">
+                    <h2>Production Blocks</h2>
+                    <div id="production-buttons-container"></div>
+                </div>
+                <div id="energy-section" class="upgrades-subsection hidden">
+                    <h2>Energy Blocks</h2>
+                    <div id="energy-buttons-container"></div>
+                </div>
+                <div id="liquids-section" class="upgrades-subsection hidden">
+                    <h2>Chemical Processing</h2>
+                    <div id="liquids-buttons-container"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="footer-buttons"
+        style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px;">
+
+        <button id="credits-btn" title="Mindustry Credits & Info"
+            onclick="document.getElementById('credits-modal').style.display='flex'"
+            style="width: 50px; height: 50px; border-radius: 8px; background: #333; border: 2px solid #5a5a5a; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;"
+            onmouseover="this.style.background='#555'; this.style.transform='scale(1.1)'"
+            onmouseout="this.style.background='#333'; this.style.transform='scale(1)'">
+            <!-- IMAGEN DE CREDITOS -->
+            <img src="assets/sprites/icons/link.png" alt="Créditos" style="max-width: 38px; max-height: 38px;">
+        </button>
+
+        <a href="https://github.com/Arktcode" target="_blank" id="github-btn" title="Mi Repositorio en GitHub"
+            style="width: 50px; height: 50px; border-radius: 8px; background: #333; border: 2px solid #5a5a5a; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; overflow: hidden;"
+            onmouseover="this.style.background='#555'; this.style.transform='scale(1.1)'"
+            onmouseout="this.style.background='#333'; this.style.transform='scale(1)'">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6/icons/github.svg" alt="GitHub"
+                style="width: 28px; height: 28px; filter: invert(1); object-fit: contain;">
+        </a>
+
+    </div>
+
+    <!-- Modal de Información MIndustry -->
+    <div id="credits-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+        <div
+            style="background: #36393f; border-radius: 8px; width: 450px; color: #dcddde; box-shadow: 0 8px 24px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid #202225;">
+
+            <div
+                style="padding: 16px; background: #2f3136; border-bottom: 1px solid #202225; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0; color: #fff; font-size: 20px; font-weight: 600;">About Mindustry Clicker
+                </h2>
+            </div>
+
+            <div style="padding: 20px;">
+                <p style="margin-top: 0; margin-bottom: 8px;"><strong style="color: #fff;">Official Content &
+                        Resources:</strong> <span style="color: #007ef4;">Anuken</span> (Creator of Mindustry)</p>
+                <p style="margin-top: 0; margin-bottom: 20px;"><strong style="color: #fff;">Special Thanks:</strong>
+                    To all the players and the Hispanic community and the Keso <img src="assets/sprites/keso.png"
+                        style="width: 20px; height: 20px; border-radius: 4px;"></p>
+
+                <div
+                    style="background: #2f3136; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #202225;">
+                    <ul style="list-style: none; padding-left: 0; margin: 0; font-size: 0.95em;">
+                        <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <img src="assets/sprites/iconLogo.png" alt="Icono Oficial"
+                                style="width: 20px; height: 20px; border-radius: 4px;">
+                            <a href="https://mindustrygame.github.io/" target="_blank"
+                                style="color: #00aff4; text-decoration: none; font-weight: 500;">Official Mindustry
+                                Website</a>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+
+                            <img src="assets/sprites/core-shardLogo.png" alt="Discord Global"
+                                style="width: 20px; height: 20px; border-radius: 4px;">
+                            <a href="https://discord.gg/mindustry" target="_blank"
+                                style="color: #00aff4; text-decoration: none; font-weight: 500;">Mindustry Official
+                                Discord Community</a>
+                        </li>
+                        <li style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
+
+                            <img src="assets/sprites/mesLogo.png" alt="Discord Español"
+                                style="width: 20px; height: 20px; border-radius: 4px;">
+                            <a href="https://discord.com/invite/C83m4Yg9Kt" target="_blank"
+                                style="color: #00aff4; text-decoration: none; font-weight: 500;">Mindustry Unnoficial
+                                Spanish Discord Community</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div
+                style="padding: 16px; background: #2f3136; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; gap: 10px;">
+                    <button
+                        onclick="window.saveGame(); this.innerText='Saved!'; setTimeout(()=>this.innerText='Save Game', 2000);"
+                        style="padding: 8px 16px; background: #2ea043; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px; transition: background 0.2s;"
+                        onmouseover="this.style.background='#238636'" onmouseout="this.style.background='#2ea043'">Save
+                        Game</button>
+                    <button onclick="window.hardReset()"
+                        style="padding: 8px 16px; background: #da3633; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px; transition: background 0.2s;"
+                        onmouseover="this.style.background='#b62324'" onmouseout="this.style.background='#da3633'"
+                        title="Wipe all local progress">Hard Reset</button>
+                </div>
+                <button onclick="document.getElementById('credits-modal').style.display='none'"
+                    style="padding: 10px 24px; background: #5865F2; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background 0.2s;"
+                    onmouseover="this.style.background='#4752C4'" onmouseout="this.style.background='#5865F2'">Got
+                    It!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal del Leaderboard Global Firebase -->
+    <div id="leaderboard-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2500; align-items: center; justify-content: center; font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+        <div
+            style="background: #36393f; border-radius: 8px; width: 400px; color: #dcddde; box-shadow: 0 8px 24px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid #202225;">
+            <div
+                style="padding: 16px; background: #2f3136; border-bottom: 1px solid #202225; display: flex; justify-content: center;">
+                <h2 style="margin: 0; color: #fee75c; font-size: 20px; font-weight: bold; text-transform: uppercase;">
+                    Global Mindustry Clicker Rank</h2>
+            </div>
+
+            <div id="leaderboard-list" style="padding: 10px; max-height: 350px; overflow-y: auto;">
+                <div style="text-align: center; color: #888; margin-top: 20px; font-style: italic;">Connecting with the
+                    global Mindustry clicker network...</div>
+            </div>
+
+            <div
+                style="padding: 16px; background: #2f3136; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                <button id="leaderboard-auth-btn"
+                    style="padding: 10px 15px; background: #2ea043; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background 0.2s;"
+                    onmouseover="this.style.background='#238636'" onmouseout="this.style.background='#2ea043'">Set
+                    Identity</button>
+                <button onclick="document.getElementById('leaderboard-modal').style.display='none'"
+                    style="padding: 10px 24px; background: #5865F2; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background 0.2s;"
+                    onmouseover="this.style.background='#4752C4'"
+                    onmouseout="this.style.background='#5865F2'">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="background-music" loop>
+        <source src="assets/sprites/editor.ogg" type="audio/ogg">
+    </audio>
+    <audio id="explosion-sound">
+        <source src="assets/sprites/explosionReactor.ogg" type="audio/ogg">
+    </audio>
+
+    <script src="scripts/script.js"></script>
+    <script src="scripts/items.js"></script>
+    <script src="scripts/upgrades.js"></script>
+    <script src="scripts/blocks.js"></script>
+    <script src="scripts/audio.js"></script>
+    <script src="scripts/aprilfools.js"></script>
+    <script type="module" src="scripts/firebase.js"></script>
+</body>
+
+</html>

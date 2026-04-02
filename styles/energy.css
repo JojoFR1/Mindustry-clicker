@@ -1,0 +1,86 @@
+/* energy.css */
+
+#energy-panel {
+    background-color: rgba(0, 0, 0, 0.5); 
+    padding: 5px 10px; 
+    border-radius: 4px; 
+    border: 1px solid #555; 
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 200px;
+    color: #fff;
+}
+
+.fluid-panel {
+    background-color: rgba(0, 0, 0, 0.5); 
+    padding: 5px 10px; 
+    border-radius: 4px; 
+    border: 1px solid #555; 
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 200px;
+    color: #fff;
+    position: relative;
+}
+
+.fluid-bar-container {
+    width: 100%;
+    height: 12px;
+    background-color: #191a24c2;
+    border: 1px solid #151520a8;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 3px;
+    order: 2;
+}
+
+.fluid-bar-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease-out;
+}
+
+.fluid-label {
+    font-size: 0.9em; 
+    font-weight: bold;
+    margin-bottom: 2px;
+    order: 1;
+}
+
+.fluid-icon {
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background-color: #222;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+#energy-label {
+    font-size: 1em; 
+    font-weight: bold;
+    margin-bottom: 3px;
+    color: #F3E979;
+}
+
+#energy-bar-container {
+    width: 100%;
+    height: 12px;
+    background-color: #191a24c2;
+    border: 1px solid #151520a8;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+#energy-bar-fill {
+    height: 100%;
+    width: 0%;
+    background-color: #F3E979;
+    transition: width 0.3s ease-out;
+}

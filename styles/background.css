@@ -1,0 +1,10 @@
+/* background.css */
+
+body {
+    background-image: url('../assets/sprites/themes/space.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: #080613;
+}
