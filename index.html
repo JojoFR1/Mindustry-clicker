@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mindustry Clicker</title>
+
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/items.css">
     <link rel="stylesheet" href="styles/energy.css">
@@ -103,7 +104,7 @@
     <!-- Contenedor Principal -->
     <div id="game-container">
         <header>
-            <h1>Mindustry Clicker</h1>
+            <img src="assets/sprites/icons/mindc.logo.png" alt="Mindustry Clicker" style="width: 250px; margin-bottom: 5px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));">
             <div>
                 <h4>By: Arksource</h4>
             </div>
@@ -309,32 +310,45 @@
     <!-- Modal de Configuración (Audio & Cuentas) -->
     <div id="config-modal"
         style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2100; align-items: center; justify-content: center; font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-        <div style="background: #36393f; border-radius: 4px; width: 440px; color: #dcddde; box-shadow: 0 8px 24px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid #202225;">
-            
-            <div style="padding: 16px; background: #2f3136; border-bottom: 1px solid #202225; display: flex; justify-content: center; align-items: center;">
-                <h2 style="margin: 0; color: #fff; font-size: 16px; font-weight: 700; text-transform: uppercase;">User Settings</h2>
+        <div
+            style="background: #36393f; border-radius: 4px; width: 440px; color: #dcddde; box-shadow: 0 8px 24px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid #202225;">
+
+            <div
+                style="padding: 16px; background: #2f3136; border-bottom: 1px solid #202225; display: flex; justify-content: center; align-items: center;">
+                <h2 style="margin: 0; color: #fff; font-size: 16px; font-weight: 700; text-transform: uppercase;">User
+                    Settings</h2>
             </div>
-            
+
             <div style="padding: 24px;">
                 <div style="margin-bottom: 24px;">
-                    <label style="display:block; font-size: 12px; font-weight:700; color:#b9bbbe; text-transform:uppercase; margin-bottom:8px;">Music Volume</label>
-                    <input type="range" id="vol-music" min="0" max="1" step="0.01" style="width: 100%; accent-color: #5865F2; cursor: pointer;">
+                    <label
+                        style="display:block; font-size: 12px; font-weight:700; color:#b9bbbe; text-transform:uppercase; margin-bottom:8px;">Music
+                        Volume</label>
+                    <input type="range" id="vol-music" min="0" max="1" step="0.01"
+                        style="width: 100%; accent-color: #5865F2; cursor: pointer;">
                 </div>
                 <div style="margin-bottom: 8px;">
-                    <label style="display:block; font-size: 12px; font-weight:700; color:#b9bbbe; text-transform:uppercase; margin-bottom:8px;">SFX Volume</label>
-                    <input type="range" id="vol-sfx" min="0" max="1" step="0.01" style="width: 100%; accent-color: #5865F2; cursor: pointer;">
+                    <label
+                        style="display:block; font-size: 12px; font-weight:700; color:#b9bbbe; text-transform:uppercase; margin-bottom:8px;">SFX
+                        Volume</label>
+                    <input type="range" id="vol-sfx" min="0" max="1" step="0.01"
+                        style="width: 100%; accent-color: #5865F2; cursor: pointer;">
                 </div>
             </div>
 
-            <div style="padding: 16px; background: #2f3136; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #202225;">
+            <div
+                style="padding: 16px; background: #2f3136; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #202225;">
                 <div style="display: flex; gap: 8px;">
-                    <button onclick="window.saveGame(); this.innerText='Saved!'; setTimeout(()=>this.innerText='Save Game', 2000);"
+                    <button
+                        onclick="window.saveGame(); this.innerText='Saved!'; setTimeout(()=>this.innerText='Save Game', 2000);"
                         style="padding: 10px 16px; background: #5865F2; color: #fff; border: none; border-radius: 3px; cursor: pointer; font-weight: 500; font-size: 14px; transition: background 0.2s;"
-                        onmouseover="this.style.background='#4752c4'" onmouseout="this.style.background='#5865F2'">Save Game</button>
+                        onmouseover="this.style.background='#4752c4'" onmouseout="this.style.background='#5865F2'">Save
+                        Game</button>
                     <button onclick="window.hardReset()"
                         style="padding: 10px 16px; background: transparent; color: #ed4245; border: none; border-radius: 3px; cursor: pointer; font-weight: 500; font-size: 14px; transition: text-decoration 0.2s;"
-                        onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"
-                        title="Wipe all local progress">Hard Reset</button>
+                        onmouseover="this.style.textDecoration='underline'"
+                        onmouseout="this.style.textDecoration='none'" title="Wipe all local progress">Hard
+                        Reset</button>
                 </div>
                 <button onclick="document.getElementById('config-modal').style.display='none'"
                     style="padding: 10px 24px; background: transparent; color: #fff; border: none; border-radius: 3px; cursor: pointer; font-weight: 500; font-size: 14px; transition: text-decoration 0.2s;"
