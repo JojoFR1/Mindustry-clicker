@@ -215,7 +215,7 @@ const energyBlocks = [
         level: 0, maxLevel: 15, unlocked: false,
         output_per_level: 55,
         input_resource: 'coal',
-        input_per_level: 1.5,
+        input_per_level: 2,
         fluid_input_resource: 'water',
         fluid_input_rate: 10,
         cost: { copper: 35, graphite: 40 },
