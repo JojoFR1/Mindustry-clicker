@@ -577,6 +577,7 @@ function checkDiscordAuth() {
             window.lastAvatar = avatarUrl;
             localStorage.setItem('mindustryClickerCloudUser', finalName);
             localStorage.setItem('mindustryClickerCloudAvatar', avatarUrl);
+            localStorage.setItem('mindustryClickerDiscordID', id);
             
             alert(`Connected successfully, Commander ${finalName}!`);
             window.saveGame();

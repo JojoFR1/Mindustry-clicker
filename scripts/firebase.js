@@ -21,6 +21,9 @@ try {
 }
 
 function getOrSetUserId() {
+    let discordId = localStorage.getItem('mindustryClickerDiscordID');
+    if (discordId) return discordId;
+
     let uid = localStorage.getItem('mindustryClickerCloudID');
     if (!uid) {
         uid = 'user_' + Math.random().toString(36).substr(2, 9) + Date.now();
@@ -28,6 +31,23 @@ function getOrSetUserId() {
     }
     return uid;
 }
+
+window.generateIntegrityHash = function(score, resources) {
+    const secretSalt = "mindustry_clicker_anti_cheat_v1_2026";
+    const cu = Math.floor(resources?.copper || 0);
+    const si = Math.floor(resources?.silicio || 0);
+    const sr = Math.floor(resources?.['surge-alloy'] || 0);
+    const s = Math.floor(score || 0);
+    const rawStr = `${s}_${cu}_${si}_${sr}_${secretSalt}`;
+    
+    let hash = 0;
+    for (let i = 0; i < rawStr.length; i++) {
+        const char = rawStr.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; 
+    }
+    return hash.toString(16);
+};
 
 window.saveToCloud = async function (username, saveDataObj, score, avatarUrl) {
     if (!db) return false;
@@ -47,6 +67,7 @@ window.saveToCloud = async function (username, saveDataObj, score, avatarUrl) {
         avatar: avatarUrl || "",
         score: score || 0,
         data: saveDataObj,
+        hash: window.generateIntegrityHash(score, saveDataObj?.resources || {}),
         lastOnline: new Date().getTime()
     };
 
@@ -85,20 +106,48 @@ window.getGlobalLeaderboard = async function () {
 
     try {
         const ref = collection(db, "jugadores");
-        // Filtrar a los mejores 50, de mayor a menor cobre
-        const q = query(ref, orderBy("score", "desc"), limit(50));
+        // Buscamos 200 porque luego filtraremos falsificados y duplicados localmente
+        const q = query(ref, orderBy("score", "desc"), limit(200));
         const snapshots = await getDocs(q);
 
-        const topPlayers = [];
+        const uniqueUsers = new Map();
+
         snapshots.forEach((doc) => {
             const data = doc.data();
-            topPlayers.push({
-                username: data.username,
-                avatar: data.avatar,
-                score: data.score,
-                payload: data.data // Exportamos todo el estado de la partida para desglosarlo
-            });
+            
+            // 1. Anti-Cheat: Verificar Hash
+            const expectedHash = window.generateIntegrityHash(data.score, data.data?.resources || {});
+            if (!data.hash || data.hash !== expectedHash) {
+                // Falla el chequeo de integridad o es puntaje antiguo. Ignorar.
+                return; 
+            }
+
+            // 2. Desduplicar: Solo nos quedamos con el puntaje más alto por usuario
+            const uname = data.username || "Unknown";
+            if (!uniqueUsers.has(uname)) {
+                uniqueUsers.set(uname, {
+                    username: data.username,
+                    avatar: data.avatar,
+                    score: data.score,
+                    payload: data.data 
+                });
+            } else {
+                if (data.score > uniqueUsers.get(uname).score) {
+                    uniqueUsers.set(uname, {
+                        username: data.username,
+                        avatar: data.avatar,
+                        score: data.score,
+                        payload: data.data 
+                    });
+                }
+            }
         });
+
+        // Convertir a Array, reordenar y tomar los mejores 50
+        const topPlayers = Array.from(uniqueUsers.values())
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 50);
+
         return topPlayers;
     } catch (e) {
         console.error("Error leyendo Leaderboard: ", e);
