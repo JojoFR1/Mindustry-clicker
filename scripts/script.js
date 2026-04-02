@@ -355,7 +355,7 @@ function gameLoop(currentTime) {
 }
 
 // Sistema de Guardado (Firebase)
-window.lastUsername = localStorage.getItem('mindustryClickerCloudUser') || "Comandante Anónimo";
+window.lastUsername = localStorage.getItem('mindustryClickerCloudUser') || "Anonymous Commander";
 window.lastAvatar = localStorage.getItem('mindustryClickerCloudAvatar') || "";
 
 window.saveGame = async function() {
