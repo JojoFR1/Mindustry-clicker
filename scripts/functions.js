@@ -141,8 +141,9 @@ window.refundBlock = function (block) {
 function isUnlockRequirementMet(block) {
     if (!block.unlockReq) return true;
     const req = block.unlockReq;
-    if (req.resource && req.minAmount !== undefined)
-        return (window.getGameResources ? window.getGameResources()[req.resource] : 0) >= req.minAmount;
+    const resKey = req.resource || req.itemId;
+    if (resKey && req.minAmount !== undefined)
+        return (window.getGameResources ? window.getGameResources()[resKey] : 0) >= req.minAmount;
     if (req.blockId && req.minLevel !== undefined) return getBlockLevelInternal(req.blockId) >= req.minLevel;
     if (req.upgradeId && req.minLevel !== undefined) return window.getUpgradeLevel ? window.getUpgradeLevel(req.upgradeId) >= req.minLevel : false;
     return true;
@@ -419,7 +420,8 @@ function updateBlockButton(block) {
         if (reqEl) {
             const req = block.unlockReq;
             let reqText = 'Requires: ';
-            if (req.resource)       reqText += `${req.minAmount} ${formatRes(req.resource)}`;
+            const resKey = req.resource || req.itemId;
+            if (resKey)             reqText += `${req.minAmount} ${formatRes(resKey)}`;
             else if (req.blockId)   reqText += `${formatRes(req.blockId)} Lvl ${req.minLevel}`;
             else if (req.recipeId)  reqText += `${formatRes(req.recipeId)} Lvl ${req.minLevel}`;
             else if (req.upgradeId) {

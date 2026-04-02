@@ -291,7 +291,7 @@ const liquidBlocks = [
         cost: { titanium: 40, metaglass: 30 },
         cost_multiplier: 1.5,
         consumption: 0,
-        unlockReq: { blockId: 'water-extractor', minLevel: 1 },
+        unlockReq: { itemId: 'metaglass', minAmount: 200 },
     },
     {
         id: 'water-extractor',
