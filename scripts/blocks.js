@@ -24,12 +24,12 @@ const productionBlocks = [
         description: 'Smelts Coal into Graphite.',
         category: 'production',
         level: 0, maxLevel: 20, unlocked: false,
-        crafting_rate: 5,
+        crafting_rate: 4,
         input_rate: { coal: 4 },
         fluid_input_resource: 'water',
         fluid_input_rate: 6,
         output_resource: 'graphite',
-        output_rate: 2,
+        output_rate: 5,
         cost: { graphite: 50, lead: 100, titanium: 100, silicio: 50 },
         cost_multiplier: 1.5,
         consumption: 0,
@@ -57,9 +57,10 @@ const productionBlocks = [
         description: 'Refines silicon from sand and coal, using pyratite as an additional heat source.',
         category: 'production',
         level: 0, maxLevel: 20, unlocked: false,
-        crafting_rate: 2,
+        crafting_rate: 3,
         input_rate: { sand: 4, coal: 2 },
         output_resource: 'silicio',
+        output_rate: 5,
         cost: { copper: 300, lead: 200, graphite: 50 },
         cost_multiplier: 1.5,
         consumption: 10,
@@ -75,6 +76,7 @@ const productionBlocks = [
         crafting_rate: 1,
         input_rate: { sand: 2, lead: 2 },
         output_resource: 'metaglass',
+        output_rate: 3,
         cost: { copper: 60, lead: 30 },
         cost_multiplier: 1.5,
         consumption: 20,
@@ -353,12 +355,13 @@ const liquidBlocks = [
         level: 0, maxLevel: 20, unlocked: false,
         crafting_rate: 1,
         input_rate: {},
+        output_rate: 4,
         fluid_input_resource: 'water',
         fluid_input_rate: 30,
         output_resource: 'spore-pod',
-        cost: { copper: 25, lead: 25, silicio: 10 },
+        cost: { copper: 20, lead: 20, silicio: 10 },
         cost_multiplier: 1.5,
-        consumption: 20,
+        consumption: 10,
         unlockReq: { blockId: 'water-extractor', minLevel: 1 },
     },
     {
@@ -550,7 +553,7 @@ window.recalculateTotalBlockConsumption = recalculateTotalBlockConsumption;
 window.getLogicBlocks = () => logicBlocks;
 window.isLogicUnlocked = () => logicBlocks.find(b => b.id === 'micro-processor')?.level > 0;
 
-window.attemptBuyBlockById = function(id, max = true) {
+window.attemptBuyBlockById = function (id, max = true) {
     const all = window.getAllBlocks();
     const block = all.find(b => b.id === id);
     if (!block) return false;
@@ -559,9 +562,9 @@ window.attemptBuyBlockById = function(id, max = true) {
     return bought;
 };
 
-window.refundBlock = function(block) {
+window.refundBlock = function (block) {
     if (block.level <= 0) return;
-    
+
     // We want 50% of the cost we paid for the last level
     // This is equal to the cost calculated if it was at level - 1.
     const tempCost = JSON.parse(JSON.stringify(block.base_cost));
@@ -570,16 +573,16 @@ window.refundBlock = function(block) {
             tempCost[r] = Math.ceil(tempCost[r] * (block.cost_multiplier || 1.5));
         }
     }
-    
+
     if (window.addResources) {
         const refund = {};
         for (const r in tempCost) refund[r] = Math.floor(tempCost[r] * 0.5);
         window.addResources(refund);
     }
-    
+
     block.level--;
     recalculateBlockCost(block);
-    
+
     if (window.recalculateNominalStats) window.recalculateNominalStats();
     if (window.recalculateTotalBlockConsumption) window.recalculateTotalBlockConsumption();
     window.guiDirty = true;
@@ -783,7 +786,7 @@ function createBlockButton(block, containerId) {
         </div>
         <img src="${block.sprite}" alt="${block.name}" class="upgrade-sprite">
     `;
-    
+
     // Listeners rápidos
     btn.querySelector('.card-quick-btn.minus').addEventListener('click', (e) => {
         e.stopPropagation();
