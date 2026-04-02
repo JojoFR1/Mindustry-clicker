@@ -41,7 +41,7 @@ const productionBlocks = [
         sprite: 'assets/sprites/silicon-smelter.png',
         description: 'Smelts Sand and Coal into Silicon.',
         category: 'production',
-        level: 0, maxLevel: 20, unlocked: false,
+        level: 0, maxLevel: 15, unlocked: false,
         crafting_rate: 2,
         input_rate: { sand: 4, coal: 2 },
         output_resource: 'silicio',
@@ -49,6 +49,21 @@ const productionBlocks = [
         cost_multiplier: 1.5,
         consumption: 10,
         unlockReq: { resource: 'sand', minAmount: 1000 },
+    },
+    {
+        id: 'silicon-crucible',
+        name: 'Silicon Crucible',
+        sprite: 'assets/sprites/silicon-crucible.png',
+        description: 'Refines silicon from sand and coal, using pyratite as an additional heat source.',
+        category: 'production',
+        level: 0, maxLevel: 20, unlocked: false,
+        crafting_rate: 2,
+        input_rate: { sand: 4, coal: 2 },
+        output_resource: 'silicio',
+        cost: { copper: 300, lead: 200, graphite: 50 },
+        cost_multiplier: 1.5,
+        consumption: 10,
+        unlockReq: { blockId: 'silicon-smelter', minLevel: 15 },
     },
     {
         id: 'kiln',
@@ -153,7 +168,7 @@ const productionBlocks = [
         },
         cost_multiplier: 1,
         consumption: 100000, // Consume muchísima energía
-        unlockReq: { blockId: 'surge-smelter', minLevel: 20 },
+        unlockReq: { blockId: 'surge-smelter', minLevel: 15 },
     },
 ];
 
@@ -243,18 +258,59 @@ const energyBlocks = [
 
 const liquidBlocks = [
     {
+        id: 'liquid-tank',
+        name: 'Liquid Tank',
+        sprite: 'assets/sprites/liquid-tank.png',
+        description: 'Adds +1,000 capacity to all liquids.',
+        category: 'liquids',
+        level: 0, maxLevel: 25, unlocked: false,
+        storage_per_level: 1000,
+        cost: { titanium: 40, metaglass: 30 },
+        cost_multiplier: 1.5,
+        consumption: 0,
+        unlockReq: { blockId: 'water-extractor', minLevel: 1 },
+    },
+    {
         id: 'water-extractor',
         name: 'Water Extractor',
         sprite: 'assets/sprites/water-extractor.png',
         description: 'Extracts groundwater.',
         category: 'liquids',
-        level: 0, maxLevel: 20, unlocked: false,
+        level: 0, maxLevel: 15, unlocked: false,
         fluid_output_resource: 'water',
-        fluid_output_rate: 60,
+        fluid_output_rate: 50,
         cost: { copper: 30, lead: 30, graphite: 15, metaglass: 20 },
         cost_multiplier: 1.5,
-        consumption: 15,
+        consumption: 5,
         unlockReq: { blockId: 'graphite-press', minLevel: 3 },
+    },
+    {
+        id: 'water-pump',
+        name: 'Water Pump',
+        sprite: 'assets/sprites/rotary-pump.png',
+        description: 'Extracts water.',
+        category: 'liquids',
+        level: 0, maxLevel: 20, unlocked: false,
+        fluid_output_resource: 'water',
+        fluid_output_rate: 70,
+        cost: { copper: 70, silicio: 20, graphite: 35, metaglass: 50 },
+        cost_multiplier: 1.5,
+        consumption: 10,
+        unlockReq: { blockId: 'water-extractor', minLevel: 15 },
+    },
+    {
+        id: 'slag-extractor',
+        name: 'Slag Extractor',
+        sprite: 'assets/sprites/mechanical-pump-slag.png',
+        description: 'Extracts molten slag from the core.',
+        category: 'liquids',
+        level: 0, maxLevel: 15, unlocked: false,
+        fluid_output_resource: 'slag',
+        fluid_output_rate: 45,
+        cost: { metaglass: 50, graphite: 40, titanium: 20 },
+        cost_multiplier: 1.6,
+        consumption: 40,
+        unlockReq: { blockId: 'water-extractor', minLevel: 5 },
     },
     {
         id: 'cultivator',
@@ -335,37 +391,25 @@ const liquidBlocks = [
         consumption: 20,
         unlockReq: { blockId: 'pyratite-mixer', minLevel: 3 },
     },
+];
+
+const logicBlocks = [
     {
-        id: 'liquid-tank',
-        name: 'Liquid Tank',
-        sprite: 'assets/sprites/liquid-tank.png',
-        description: 'Adds +1,000 capacity to all liquids.',
-        category: 'liquids',
-        level: 0, maxLevel: 25, unlocked: false,
-        storage_per_level: 1000,
-        cost: { titanium: 40, metaglass: 30 },
-        cost_multiplier: 1.5,
+        id: 'micro-processor',
+        name: 'Logic Processor',
+        sprite: 'assets/sprites/micro-processor.png',
+        description: 'Enables quick +/- level controls for all factory blocks.',
+        category: 'logic',
+        level: 0, maxLevel: 1, unlocked: false,
+        cost: { copper: 2000, lead: 2000, graphite: 500, silicio: 300 },
+        cost_multiplier: 1,
         consumption: 0,
-        unlockReq: { blockId: 'water-extractor', minLevel: 1 },
-    },
-    {
-        id: 'slag-extractor',
-        name: 'Slag Extractor',
-        sprite: 'assets/sprites/mechanical-pump-slag.png',
-        description: 'Extracts molten slag from the core.',
-        category: 'liquids',
-        level: 0, maxLevel: 15, unlocked: false,
-        fluid_output_resource: 'slag',
-        fluid_output_rate: 45,
-        cost: { metaglass: 50, graphite: 40, titanium: 20 },
-        cost_multiplier: 1.6,
-        consumption: 40,
-        unlockReq: { blockId: 'water-extractor', minLevel: 5 },
+        unlockReq: { blockId: 'silicon-smelter', minLevel: 10 },
     },
 ];
 
 // Estado y Meltdown
-[...productionBlocks, ...energyBlocks, ...liquidBlocks].forEach(block => {
+[...productionBlocks, ...energyBlocks, ...liquidBlocks, ...logicBlocks].forEach(block => {
     block.base_cost = JSON.parse(JSON.stringify(block.cost));
 });
 
@@ -380,7 +424,7 @@ function recalculateBlockCost(block) {
 
 window.triggerThoriumMeltdown = function (reactor) {
     if (window.playExplosion) window.playExplosion();
-    [productionBlocks, energyBlocks, liquidBlocks].forEach(category => {
+    [productionBlocks, energyBlocks, liquidBlocks, logicBlocks].forEach(category => {
         category.forEach(block => {
             block.level = Math.max(0, block.level - 15);
             recalculateBlockCost(block);
@@ -467,10 +511,12 @@ window.getGeneratorsArray = () => energyBlocks;
 window.getProductionBlocks = () => productionBlocks;
 window.getEnergyBlocks = () => energyBlocks;
 window.getLiquidBlocks = () => liquidBlocks;
-window.getAllBlocks = () => [...productionBlocks, ...energyBlocks, ...liquidBlocks];
+window.getAllBlocks = () => [...productionBlocks, ...energyBlocks, ...liquidBlocks, ...logicBlocks];
 window.getFactoryConsumption = () => totalBlockConsumption;
 window.recalculateNominalStats = recalculateNominalStats;
 window.recalculateTotalBlockConsumption = recalculateTotalBlockConsumption;
+window.getLogicBlocks = () => logicBlocks;
+window.isLogicUnlocked = () => logicBlocks.find(b => b.id === 'logic-processor')?.level > 0;
 
 // Desbloqueo
 function isUnlockRequirementMet(block) {
@@ -557,8 +603,12 @@ function recalculateNominalStats() {
     energyState.powerOutput = energyBlocks.reduce((sum, g) => sum + (g.level || 0) * (g.output_per_level || 0), 0);
     const addedStorage = energyBlocks.reduce((sum, b) => sum + (b.level || 0) * (b.storage_per_level || 0), 0);
     energyState.maxEnergy = Number.isFinite(addedStorage) ? addedStorage : 0;
+    // Clamp currentEnergy to not exceed new max
+    if (energyState.currentEnergy > energyState.maxEnergy) {
+        energyState.currentEnergy = energyState.maxEnergy;
+    }
 
-    // Calcular capacidad máxima de líquidos (tank levels +0 por default)
+    // Fluid max capacity from tanks
     const fluidStorage = liquidBlocks.reduce((sum, b) => sum + (b.level || 0) * (b.storage_per_level || 0), 0);
     for (const f in fluidsState) {
         fluidsState[f].max = fluidStorage;
@@ -661,7 +711,11 @@ function createBlockButton(block, containerId) {
         </div>
         <img src="${block.sprite}" alt="${block.name}" class="upgrade-sprite">
     `;
-    btn.addEventListener('click', (e) => { e.stopPropagation(); attemptBuyBlock(block); });
+    btn.addEventListener('click', (e) => {
+        // Only trigger buy if click is on outer button, not on child buy-sub-btn
+        if (e.target.closest('.buy-sub-btn') || e.target.closest('.logic-quick-btn')) return;
+        attemptBuyBlock(block);
+    });
     block.element = btn;
     container.appendChild(btn);
 }
@@ -752,6 +806,7 @@ function updateBlockButton(block) {
 
 window.updateProductionPanel = () => productionBlocks.forEach(updateBlockButton);
 window.updateLiquidsPanel = () => liquidBlocks.forEach(updateBlockButton);
+window.updateLogicPanel = () => logicBlocks.forEach(updateBlockButton);
 window.updateEnergyPanel = () => {
     const cur = Math.floor(energyState.currentEnergy), max = energyState.maxEnergy, net = window.getNetPowerFlow();
     const lbl = document.getElementById('energy-label'), fill = document.getElementById('energy-bar-fill');
@@ -768,7 +823,8 @@ document.addEventListener('DOMContentLoaded', () => {
     productionBlocks.forEach(b => createBlockButton(b, 'production-buttons-container'));
     energyBlocks.forEach(b => createBlockButton(b, 'energy-buttons-container'));
     liquidBlocks.forEach(b => createBlockButton(b, 'liquids-buttons-container'));
-    document.addEventListener('resourcesUpdated', () => { window.updateProductionPanel(); window.updateEnergyPanel(); window.updateLiquidsPanel(); });
-    document.addEventListener('checkUpgrades', () => { window.updateProductionPanel(); window.updateEnergyPanel(); window.updateLiquidsPanel(); });
-    window.updateEnergyPanel(); window.updateProductionPanel(); window.updateLiquidsPanel();
+    logicBlocks.forEach(b => createBlockButton(b, 'logic-buttons-container'));
+    document.addEventListener('resourcesUpdated', () => { window.updateProductionPanel(); window.updateEnergyPanel(); window.updateLiquidsPanel(); window.updateLogicPanel(); });
+    document.addEventListener('checkUpgrades', () => { window.updateProductionPanel(); window.updateEnergyPanel(); window.updateLiquidsPanel(); window.updateLogicPanel(); });
+    window.updateEnergyPanel(); window.updateProductionPanel(); window.updateLiquidsPanel(); window.updateLogicPanel();
 });

@@ -20,7 +20,6 @@ try {
     console.error("Firebase no se pudo inicializar (revisa tus credenciales):", e);
 }
 
-// Reconocimiento Pasivo (ID Único Falso de Hardware)
 function getOrSetUserId() {
     let uid = localStorage.getItem('mindustryClickerCloudID');
     if (!uid) {
@@ -33,7 +32,7 @@ function getOrSetUserId() {
 window.saveToCloud = async function (username, saveDataObj, score, avatarUrl) {
     if (!db) return false;
 
-    // 🔒 Bloqueo: Solo usuarios verificados con Discord pueden subir al Leaderboard
+    // Bloqueo: Solo usuarios verificados con Discord pueden subir al Leaderboard
     const cloudUser = localStorage.getItem('mindustryClickerCloudUser');
     if (!cloudUser) {
         console.log("Guardado en nube omitido: usuario no autenticado.");

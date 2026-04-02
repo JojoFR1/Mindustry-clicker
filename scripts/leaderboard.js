@@ -68,7 +68,7 @@ window.openLeaderboard = async () => {
         const statsDiv = document.getElementById('leaderboard-my-stats');
         if (statsDiv && window.getUserRankStats) {
             statsDiv.style.display = 'block';
-            statsDiv.innerHTML = '<div style="text-align:center; color:#888; font-style:italic;">Calculating your rank percentile...</div>';
+            statsDiv.innerHTML = '<div style="text-align:center; color:#888; font-style:italic;">Calculating your rank percenti...</div>';
 
             const res = window.getGameResources();
             const fluids = window.getFluidsState ? window.getFluidsState() : {};

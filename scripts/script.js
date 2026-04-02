@@ -349,6 +349,7 @@ function gameLoop(currentTime) {
         if (window.updateUpgradesPanel) window.updateUpgradesPanel();
         if (window.updateProductionPanel) window.updateProductionPanel();
         if (window.updateLiquidsPanel) window.updateLiquidsPanel();
+        if (window.updateLogicPanel) window.updateLogicPanel();
         window.slowGuiDirty = false;
         window.guiDirty = false;
         lastSlowGuiUpdate = currentTime;
@@ -435,10 +436,11 @@ window.loadGame = async function() {
             window.autominingMultiplier = data.autominingMultiplier;
         }
         // Load Energy
+        let savedCurrentEnergy = 0;
         if (data.energyState && window.getEnergyState) {
             const es = window.getEnergyState();
-            es.currentEnergy = data.energyState.currentEnergy || 0;
-            es.maxEnergy = data.energyState.maxEnergy || data.energyState.capacity || 100;
+            savedCurrentEnergy = data.energyState.currentEnergy || 0;
+            // maxEnergy will be recalculated from battery levels below
         }
         // Cargar Líquidos
         if (data.fluidsState && window.getFluidsState) {
@@ -492,10 +494,17 @@ window.loadGame = async function() {
         // Recalculate everything after load
         if (window.recalculateNominalStats) window.recalculateNominalStats();
         if (window.recalculateTotalBlockConsumption) window.recalculateTotalBlockConsumption();
+        
+        // Re-apply saved currentEnergy AFTER recalc (so maxEnergy is set correctly first)
+        if (window.getEnergyState) {
+            const es = window.getEnergyState();
+            es.currentEnergy = Math.min(savedCurrentEnergy, es.maxEnergy);
+        }
+        
         if (window.recalculateFluidCapacities) window.recalculateFluidCapacities();
         if (window.checkResourceUnlocks) window.checkResourceUnlocks();
         if (window.updateCraftingPanel) window.updateCraftingPanel();
-        if (window.recalculateGlobalStats) window.recalculateGlobalStats(); // <-- ADDED THIS
+        if (window.recalculateGlobalStats) window.recalculateGlobalStats();
         
         window.guiDirty = true;
         window.slowGuiDirty = true;
