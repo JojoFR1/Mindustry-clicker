@@ -331,6 +331,12 @@ function checkCanAffordBlock(block) {
 
 function attemptBuyBlock(block) {
     if (block.level >= block.maxLevel || !checkCanAffordBlock(block)) return false;
+    
+    if (block.id === 'interplanetary-accelerator') {
+        const msg = "Has logrado escapar de este planeta, el universo está colapsando ante tal hazaña. Recibirás un prestigio y la oportunidad de iniciar desde cero con más fuerza, pero a su vez con más dificultad.\n\n¿Aceptar prestigio?";
+        if (!confirm(msg)) return false;
+    }
+
     if (!window.subtractResources(block.cost)) return false;
     block.level++;
     // Trigger prestige when Interplanetary Accelerator is purchased
