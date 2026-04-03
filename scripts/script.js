@@ -289,7 +289,7 @@ window.updateFluidsPanel = function () {
     }
 
     if (fs.slag) {
-        const slagUnlocked = window.getLiquidBlocks ? window.getLiquidBlocks().some(b => b.id === 'slag-extractor' && b.unlocked) : false;
+        const slagUnlocked = window.getLiquidBlocks ? window.getLiquidBlocks().some(b => b.id === 'melter' && b.unlocked) : false;
         if (fs.slag.current > 0 || fs.slag.netFlow > 0 || slagUnlocked) {
             document.getElementById('slag-panel').style.display = 'flex';
             document.getElementById('slag-bar-fill').style.width = `${Math.min(100, Math.max(0, fs.slag.max > 0 ? (fs.slag.current / fs.slag.max) * 100 : 0))}%`;
