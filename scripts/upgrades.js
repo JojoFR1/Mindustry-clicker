@@ -421,6 +421,12 @@ window.updateUpgradesPanel = function () {
             u.element.classList.add('locked');
             u.element.classList.remove('can-buy');
             u.element.disabled = true;
+            nameEl.textContent = u.name;
+            const qc = u.element.querySelector('.card-quick-controls');
+            if (qc) {
+                const qcLvl = qc.querySelector('.quick-lvl-label');
+                if (qcLvl) qcLvl.textContent = `Lvl 0`;
+            }
             if (reqEl) {
                 let txt = '';
                 if (u.unlockReqs) {

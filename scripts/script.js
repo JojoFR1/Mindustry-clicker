@@ -262,7 +262,9 @@ window.updateItemsPanel = function () {
                 window.sanitizeResource(res);
                 const power = window.getPowerLevel ? window.getPowerLevel(res) : 0;
                 const auto = window.getAutominingRate ? window.getAutominingRate(res) : 0;
-                textEl.textContent = `Extraction (+${window.formatNumber(power)}) /s: ${window.formatNumber(auto)}`;
+                const pMult = window.getPrestigeProductionMultiplier ? window.getPrestigeProductionMultiplier() : 1;
+                const multText = pMult > 1 ? ` (×${pMult.toFixed(1)})` : '';
+                textEl.textContent = `Extraction (+${window.formatNumber(power)}) /s: ${window.formatNumber(auto)}${multText}`;
             }
         }
         if (labelEl) {

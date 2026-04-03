@@ -103,7 +103,10 @@ window.updatePrestigeBadge = function () {
     if (!badge) return;
     if (window.prestigeData.level > 0) {
         badge.style.display = 'block';
-        if (badgeText) badgeText.textContent = window.toRoman(window.prestigeData.level);
+        if (badgeText) {
+            const mult = window.getPrestigeProductionMultiplier();
+            badgeText.textContent = `${window.toRoman(window.prestigeData.level)} (×${mult.toFixed(1)})`;
+        }
     } else {
         badge.style.display = 'none';
     }

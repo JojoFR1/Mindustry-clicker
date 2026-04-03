@@ -368,7 +368,8 @@ window.formatRes = function (res) {
 
 window.getCostHTML = function (cost) {
     if (!cost) return '';
-    return Object.entries(cost).map(([id, amount]) => {
+    const mult = window.getPrestigeCostMultiplier ? window.getPrestigeCostMultiplier() : 1;
+    let html = Object.entries(cost).map(([id, amount]) => {
         let sprite = `assets/sprites/item-${id}.png`;
         if (['water', 'oil', 'cryo', 'slag'].includes(id)) {
             const liquidMap = { 'cryo': 'cryofluid' };
@@ -377,6 +378,11 @@ window.getCostHTML = function (cost) {
         const label = window.isItemNamesEnabled ? (window.getResourceData(id)?.name || window.formatRes(id)) : '';
         return `<img src="${sprite}" class="buy-cost-icon"> ${window.formatNumber(amount)} ${label}`;
     }).join(' ');
+
+    if (mult > 1) {
+        html += ` <span style="color:#d4af37; font-size:0.85em;">(×${mult.toFixed(2)})</span>`;
+    }
+    return html;
 };
 
 const formatRes = window.formatRes;
@@ -496,6 +502,12 @@ function updateBlockButton(block) {
         block.element.classList.add('locked');
         block.element.classList.remove('can-buy');
         block.element.disabled = true;
+        nameEl.textContent = block.name;
+        const qc = block.element.querySelector('.card-quick-controls');
+        if (qc) {
+            const qcLvl = qc.querySelector('.quick-lvl-label');
+            if (qcLvl) qcLvl.textContent = `Lvl 0`;
+        }
         if (reqEl) {
             if (block.unlockReqs) {
                 let parts = [];
