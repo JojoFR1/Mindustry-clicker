@@ -304,9 +304,26 @@ function attemptBuyBlock(block) {
     return true;
 }
 
-function formatRes(res) {
+window.formatRes = function(res) {
+    if (!res) return '';
     return res.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
-}
+};
+
+window.getCostHTML = function(cost) {
+    if (!cost) return '';
+    return Object.entries(cost).map(([id, amount]) => {
+        let sprite = `assets/sprites/item-${id}.png`;
+        // Check for liquids
+        if (['water','oil','cryo','slag'].includes(id)) {
+            const liquidMap = { 'cryo': 'cryofluid' };
+            sprite = `assets/sprites/liquid-${liquidMap[id] || id}.png`;
+        }
+        return `<img src="${sprite}" class="buy-cost-icon"> ${amount.toLocaleString()}`;
+    }).join(' ');
+};
+
+// Internal alias for blocks.js logic context
+const formatRes = window.formatRes;
 
 function createBlockButton(block, containerId) {
     const container = document.getElementById(containerId);
@@ -492,8 +509,8 @@ function updateBlockButton(block) {
         const canAfford = checkCanAffordBlock(block);
         buyBtn.disabled = !canAfford;
         buyBtn.classList.toggle('can-buy', canAfford);
-        buyBtn.textContent = (block.level === 0 ? 'Buy' : 'Upgrade') +
-            ` (${Object.entries(block.cost).map(([r, v]) => `${v.toLocaleString()} ${formatRes(r)}`).join(', ')})`;
+        const action = block.level === 0 ? 'Buy' : 'Upgrade';
+        buyBtn.innerHTML = `${action} ${window.getCostHTML(block.cost)}`;
     }
 
     const qc = block.element.querySelector('.card-quick-controls');

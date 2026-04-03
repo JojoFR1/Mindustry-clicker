@@ -250,6 +250,13 @@ main {
     border-color: #F3E979;
 }
 
+.buy-cost-icon {
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
+    margin: 0 1px 2px 2px;
+}
+
 .card-quick-controls {
     display: flex;
     gap: 8px;

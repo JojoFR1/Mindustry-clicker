@@ -447,8 +447,8 @@ window.updateUpgradesPanel = function () {
         if (buyBtn) {
             buyBtn.disabled = !canAfford;
             buyBtn.classList.toggle('can-buy', canAfford);
-            const action = u.currentLevel === 0 ? 'Explore' : 'Upgrade';
-            buyBtn.textContent = `${action} (${Object.entries(u.cost).map(([r, v]) => `${v.toLocaleString()} ${r}`).join(', ')})`;
+            const action = u.currentLevel === 0 ? 'Buy' : 'Upgrade';
+            buyBtn.innerHTML = `${action} ${window.getCostHTML ? window.getCostHTML(u.cost) : ''}`;
         }
 
         // Mostrar/Ocultar controles rápidos si Logic está desbloqueado
