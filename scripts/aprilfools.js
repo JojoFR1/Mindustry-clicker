@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'assets/sprites/item-lead.png',
         'assets/sprites/item-coal.png',
         'assets/sprites/item-sand.png',
+        'assets/sprites/item-scrap.png',
         'assets/sprites/item-titanium.png',
         'assets/sprites/item-thorium.png',
         'assets/sprites/item-graphite.png',

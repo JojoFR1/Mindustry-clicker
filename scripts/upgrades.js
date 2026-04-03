@@ -49,6 +49,18 @@ const upgrades = [
         onBuy: function () { if (window.checkResourceUnlocks) window.checkResourceUnlocks(); }
     },
     {
+        id: 'scrap-drill',
+        name: 'Scrap Extraction',
+        sprite: 'assets/sprites/mechanical-drill-scrap.png',
+        description: 'Increases Scrap click power by 5.',
+        maxLevel: 50, currentLevel: 0,
+        cost: { scrap: 5, copper: 12 },
+        power: { scrap: 4 },
+        type: 'mine', unlocked: false,
+        unlockReq: { upgradeId: 'sand-drill', minLevel: 10 },
+        onBuy: function () { if (window.checkResourceUnlocks) window.checkResourceUnlocks(); }
+    },
+    {
         id: 'titanium-drill',
         name: 'Titanium Extraction',
         sprite: 'assets/sprites/pneumatic-drill-titanium.png',
@@ -57,7 +69,7 @@ const upgrades = [
         cost: { graphite: 10, copper: 18 },
         power: { titanium: 3 },
         type: 'mine', unlocked: false,
-        unlockReq: { upgradeId: 'sand-drill', minLevel: 10 },
+        unlockReq: { upgradeId: 'scrap-drill', minLevel: 10 },
         onBuy: function () { if (window.checkResourceUnlocks) window.checkResourceUnlocks(); }
     },
     {
@@ -158,6 +170,21 @@ const upgrades = [
         unlockReq: { upgradeId: 'sand-drill', minLevel: 1 },
         onBuy: function () {
             if (window.upgradeAutomining) window.upgradeAutomining('sand', this.rate.sand);
+            if (window.checkResourceUnlocks) window.checkResourceUnlocks();
+        }
+    },
+    {
+        id: 'auto-scrap',
+        name: 'Scrap Line',
+        sprite: 'assets/sprites/conveyor-scrap.png',
+        description: 'Auto-mines +4 Scrap/s.',
+        maxLevel: 120, currentLevel: 0,
+        cost: { copper: 15, lead: 20, scrap: 30 },
+        rate: { scrap: 4 },
+        type: 'automine', unlocked: false,
+        unlockReq: { upgradeId: 'scrap-drill', minLevel: 1 },
+        onBuy: function () {
+            if (window.upgradeAutomining) window.upgradeAutomining('scrap', this.rate.scrap);
             if (window.checkResourceUnlocks) window.checkResourceUnlocks();
         }
     },
