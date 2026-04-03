@@ -147,7 +147,7 @@ async function renderScoreView(listDiv, statsDiv) {
         const statItems = [
             { sprite: 'assets/sprites/items/item-copper.png', val: cu },
             { sprite: 'assets/sprites/items/item-silicon.png', val: si },
-            { sprite: 'assets/sprites/items/liquid-slag.png', val: slg },
+            { sprite: 'assets/sprites/liquids/liquid-slag.png', val: slg },
             { sprite: 'assets/sprites/items/item-surge-alloy.png', val: srge },
         ];
         statItems.forEach(({ sprite, val }) => {
