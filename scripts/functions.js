@@ -428,7 +428,7 @@ function createBlockButton(block, containerId) {
     infoDiv.appendChild(buyContainer);
     infoDiv.appendChild(qcDiv);
 
-    if (block.unlockReq) {
+    if (block.unlockReq || block.unlockReqs) {
         const reqDiv = document.createElement('div');
         reqDiv.id = `block-unlock-req-${block.id}`;
         reqDiv.className = 'unlock-req-text';
