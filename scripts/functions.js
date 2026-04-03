@@ -536,8 +536,8 @@ function updateBlockButton(block) {
             outStr = Object.entries(block.output_resources).map(([r, v]) => `${window.formatNumber(v)} ${formatRes(r)}/s`).join(' + ');
         if (block.fluid_output_resource) outStr += (outStr ? ' + ' : '') + formatRes(block.fluid_output_resource);
 
-        if (block.id === 'mono') {
-            effectEl.innerHTML = `Bonus: <b>+${window.formatNumber(block.level * 5)}%</b> Automining (Copper/Lead)`;
+        if (block.category === 'logic') {
+            effectEl.textContent = block.description;
         } else if (block.storage_per_level) {
             effectEl.innerHTML = `Capacity: <b>+${window.formatNumber(block.level * block.storage_per_level)} L</b> (+${window.formatNumber(block.storage_per_level)} /lvl)`;
         } else {
