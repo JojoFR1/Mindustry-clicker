@@ -318,7 +318,7 @@ window.getCostHTML = function(cost) {
             const liquidMap = { 'cryo': 'cryofluid' };
             sprite = `assets/sprites/liquid-${liquidMap[id] || id}.png`;
         }
-        return `<img src="${sprite}" class="buy-cost-icon"> ${amount.toLocaleString()}`;
+        return `<img src="${sprite}" class="buy-cost-icon"> ${amount.toLocaleString()} ${window.isItemNamesEnabled ? id : ''}`;
     }).join(' ');
 };
 
