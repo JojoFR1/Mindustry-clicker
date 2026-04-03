@@ -174,6 +174,9 @@ window.recalculateGlobalStats = function () {
         gameData.automining[resId] = 0;
     });
 
+    const mono = (window.getLogicBlocks ? window.getLogicBlocks() : []).find(b => b.id === 'mono');
+    const monoMult = (mono && mono.level > 0 && mono.unlocked) ? Math.pow(mono.bonus_multiplier || 1.3, mono.level) : 1;
+
     if (window.getUpgradesArray) {
         window.getUpgradesArray().forEach(upgrade => {
             if (upgrade.currentLevel <= 0) return;
@@ -184,7 +187,9 @@ window.recalculateGlobalStats = function () {
             }
             if (upgrade.rate) {
                 for (const res in upgrade.rate) {
-                    gameData.automining[res] = (gameData.automining[res] || 0) + (upgrade.currentLevel * upgrade.rate[res]);
+                    let rate = upgrade.currentLevel * upgrade.rate[res];
+                    if (res === 'copper' || res === 'lead') rate *= monoMult;
+                    gameData.automining[res] = (gameData.automining[res] || 0) + rate;
                 }
             }
         });
@@ -318,6 +323,7 @@ function gameLoop(currentTime) {
         if (window.consumeGeneratorResources) window.consumeGeneratorResources(stepDelta);
         if (window.processProductionTick) window.processProductionTick(stepDelta);
         if (window.processLiquidsTick) window.processLiquidsTick(stepDelta);
+        if (window.processLogicTick) window.processLogicTick(stepDelta);
 
         if (window.addEnergy && window.getNetPowerFlow) {
             window.addEnergy(window.getNetPowerFlow() * (stepDelta / 1000));
