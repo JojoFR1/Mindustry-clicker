@@ -145,7 +145,7 @@ function isUnlockRequirementMet(block) {
 
 function recalculateTotalBlockConsumption() {
     let total = 0;
-    [...productionBlocks, ...liquidBlocks].forEach(b => total += b.level * (b.consumption || 0));
+    [...productionBlocks, ...liquidBlocks, ...logicBlocks].forEach(b => total += b.level * (b.consumption || 0));
     totalBlockConsumption = total;
     energyState.powerConsumption = total;
 }
@@ -171,11 +171,11 @@ function processBlockCategoryTick(blocksArray, deltaTime) {
         const eff = (block.consumption || 0) > 0 ? multiplier : 1;
         if (eff <= 0 && (block.consumption || 0) > 0) return;
 
-        let inputSavings = 1;
+        let productionBonus = 1;
         if (massDriverLvl > 0) {
             const inputCount = Object.keys(block.input_rate || {}).length + (block.fluid_input_resource ? 1 : 0);
             if (inputCount >= 2) {
-                inputSavings = 1 / (1 + (massDriverLvl * 0.5)); // Level 1: 1/1.5, Level 2: 1/2.0, Level 3: 1/2.5
+                productionBonus = Math.pow(1.5, massDriverLvl);
             }
         }
 
@@ -183,12 +183,12 @@ function processBlockCategoryTick(blocksArray, deltaTime) {
         let canCraft = true;
         const needed = {};
         for (const r in input) {
-            needed[r] = block.level * input[r] * tf * eff * inputSavings;
+            needed[r] = block.level * input[r] * tf * eff;
             if ((res[r] || 0) < needed[r]) { canCraft = false; break; }
         }
         let reqF = 0;
         if (canCraft && block.fluid_input_resource) {
-            reqF = block.level * block.fluid_input_rate * tf * eff * inputSavings;
+            reqF = block.level * block.fluid_input_rate * tf * eff;
             if ((fluidsState[block.fluid_input_resource]?.current || 0) < reqF) canCraft = false;
         }
         if (canCraft) {
@@ -199,21 +199,42 @@ function processBlockCategoryTick(blocksArray, deltaTime) {
             }
             const multiplier = block.itemOutput || 1;
             if (block.output_resource)
-                window.addResources({ [block.output_resource]: block.level * block.craftSpeed * multiplier * tf * eff * accMult });
+                window.addResources({ [block.output_resource]: block.level * block.craftSpeed * multiplier * tf * eff * accMult * productionBonus });
             if (block.output_resources) {
                 const addObj = {};
                 for (const or in block.output_resources)
-                    addObj[or] = block.level * block.output_resources[or] * tf * eff * accMult;
+                    addObj[or] = block.level * block.output_resources[or] * tf * eff * accMult * productionBonus;
                 window.addResources(addObj);
             }
             if (block.fluid_output_resource) {
-                const outF = block.level * block.fluid_output_rate * tf * eff * accMult;
+                const outF = block.level * block.fluid_output_rate * tf * eff * accMult * productionBonus;
                 window.addFluid(block.fluid_output_resource, outF);
-                fluidsState[block.fluid_output_resource].netFlow += block.level * block.fluid_output_rate * eff * accMult;
+                fluidsState[block.fluid_output_resource].netFlow += block.level * block.fluid_output_rate * eff * accMult * productionBonus;
             }
         }
     });
 }
+
+window.processLogicTick = function (deltaTime) {
+    const tf = deltaTime / 1000;
+    const accMult = (window.getBlockLevel && window.getBlockLevel('interplanetary-accelerator') > 0) ? 20 : 1;
+    const mono = logicBlocks.find(b => b.id === 'mono');
+    
+    let multiplier = 1;
+    if ((window.totalBlockConsumption || 0) > 0) {
+        if (window.energyState.currentEnergy <= 0 && window.getNetPowerFlow() < 0) {
+            multiplier = (window.activePowerOutput || 0) / window.totalBlockConsumption;
+        }
+    }
+
+    if (mono && mono.level > 0 && mono.unlocked) {
+        const eff = multiplier; 
+        const mineAmt = mono.level * mono.mining_rate * tf * eff * accMult;
+        if (window.addResources) {
+            window.addResources({ copper: mineAmt, lead: mineAmt });
+        }
+    }
+};
 
 window.processProductionTick = (dt) => processBlockCategoryTick(productionBlocks, dt);
 window.processLiquidsTick    = (dt) => processBlockCategoryTick(liquidBlocks, dt);
