@@ -3,6 +3,6 @@
 [![Discord](https://img.shields.io/badge/DISCORD-JOIN-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/C83m4Yg9Kt)
 [![Website](https://img.shields.io/badge/WEBSITE-PLAY%20NOW-43B581?style=for-the-badge&logo=googlechrome&logoColor=white)](https://arktcode.github.io/Mindustry-clicker/)
 
-<img width="1366" height="768" alt="chrome_Gg2Az4kvd6" src="https://github.com/user-attachments/assets/7c59475f-9c0a-453a-99d7-ff22e68c68d7" />
+<img width="1366" height="296" alt="image" src="https://github.com/user-attachments/assets/1ee8647c-2920-4c9d-b4c6-784224ffef94" />
 
 - Credits to Mindustry France (suggestions and ideas).
