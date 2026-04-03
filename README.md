@@ -4,3 +4,5 @@
 [![Website](https://img.shields.io/badge/WEBSITE-PLAY%20NOW-43B581?style=for-the-badge&logo=googlechrome&logoColor=white)](https://arktcode.github.io/Mindustry-clicker/)
 
 <img width="1366" height="768" alt="chrome_Gg2Az4kvd6" src="https://github.com/user-attachments/assets/7c59475f-9c0a-453a-99d7-ff22e68c68d7" />
+
+Credits to Mindustry France (suggestions and ideas).
